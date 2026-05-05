@@ -1006,6 +1006,59 @@
   background:#111 !important;
 }
 
+
+
+/* V75 - Totales visibles en Productos */
+.productTotals{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+  margin:0 0 16px;
+}
+.productTotalCard{
+  background:#fff;
+  border:1px solid #e6e6e6;
+  border-radius:18px;
+  padding:13px 14px;
+  box-shadow:0 12px 30px rgba(0,0,0,.035);
+}
+.productTotalCard .tLabel{
+  font-size:10px;
+  color:#6f6f6f;
+  text-transform:uppercase;
+  letter-spacing:.11em;
+  line-height:1.15;
+}
+.productTotalCard .tValue{
+  margin-top:7px;
+  font-size:19px;
+  color:#000;
+  font-weight:700;
+  line-height:1.1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#productosTab .productTable tfoot td{
+  position:sticky;
+  bottom:0;
+  background:#ffffff !important;
+  border-top:2px solid #000000 !important;
+  border-bottom:0 !important;
+  color:#000000 !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  text-align:center !important;
+  height:48px !important;
+  z-index:5 !important;
+}
+#productosTab .productTable tfoot td.totalLabel{
+  text-align:left !important;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  font-size:11px !important;
+}
+
 </style>
 </head>
 <body>
@@ -1075,10 +1128,12 @@
     <div class="actions"><button class="smallBtn dark" id="clearProductFilters">Limpiar filtros de productos</button></div>
   </div>
   <div id="activeProductFilters" class="chips productChips"></div>
+  <div id="productTotals" class="productTotals"></div>
   <div class="productTableWrap">
     <table class="productTable" id="productTable">
       <thead></thead>
       <tbody><tr><td style="padding:24px;color:#777">Sin productos cargados.</td></tr></tbody>
+      <tfoot></tfoot>
     </table>
     
   </div>
@@ -1757,7 +1812,67 @@ function friendlyProductHeader(h){
   return map[n] || String(h||'').trim();
 }
 
-function renderProductsTable(){const table=document.getElementById('productTable'); if(!table)return; const filtered=sortProductRows(productFilteredRows()); const cols=productRows.headers||[]; const displayIdx=productDisplayIndices(); table.querySelector('thead').innerHTML='<tr>'+displayIdx.map(i=>`<th class="sortable ${productSort.index===i?'sorted':''}" onclick="setProductSort(${i})" title="${sanitizeHtml(cols[i])} · ordenar de mayor a menor / menor a mayor"><span class="sortHead"><span class="sortLabel">${sanitizeHtml(friendlyProductHeader(cols[i]))}</span><span class="sortIcon">${productSortIcon(i)}</span></span></th>`).join('')+'</tr>'; table.querySelector('tbody').innerHTML=filtered.map(r=>'<tr>'+displayIdx.map(i=>{const c=cols[i];if(i===0){return `<td>${r.image?`<img class="productImg" src="${r.image}">`:'<div class="productPlaceholder">SIN IMG</div>'}</td>`}const cls=i===1?'productModel':(i===2?'productDesc':(isProductNumericHeader(c)||norm(c).includes('meses de publicacion')?'productNum':''));const cellText=String(fmtProductCell(r.values[i],c)).replace(/<[^>]*>/g,'');return `<td class="${cls}" title="${sanitizeHtml(cellText)}">${fmtProductCell(r.values[i],c)}</td>`}).join('')+'</tr>').join('')||`<tr><td colspan="${displayIdx.length||1}" style="padding:24px;color:#777">Sin resultados.</td></tr>`; const st=document.getElementById('productsStatus'); if(st)st.textContent=''; renderProductChips()}
+
+function productTotalsFromRows(rows){
+  const sumBy = (aliases, asPct=false) => rows.reduce((s,r)=>s+(productNumberValue(r,aliases,asPct)||0),0);
+  const pzsCompradas=sumBy(['Pzs Compradas','Piezas Compradas','Compradas']);
+  const pzsVendidas=sumBy(['Pzs Vendidas','Piezas Vendidas','Vendidas']);
+  const comprado=sumBy(['$ Compra','$ Comprado','Compra','Comprado','Costo Compra']);
+  const vendido=sumBy(['$ Vendido','$ Venta','Vendido','Venta','Total Vendido']);
+  const invPzs=sumBy(['Inv. Pzs','Inventario Piezas','Inventario Pzs','Inv Pzs']);
+  const invDinero=sumBy(['Inv. $','Inventario $','Inventario Dinero']);
+  return {
+    registros: rows.length,
+    pzsCompradas,
+    pzsVendidas,
+    comprado,
+    vendido,
+    invPzs,
+    invDinero,
+    pctPiezas: pzsCompradas ? (pzsVendidas/pzsCompradas*100) : 0,
+    pctVenta: comprado ? (vendido/comprado*100) : 0
+  };
+}
+function renderProductTotals(rows){
+  const box=document.getElementById('productTotals');
+  if(!box)return;
+  const t=productTotalsFromRows(rows);
+  const cards=[
+    ['Productos filtrados', num(t.registros)],
+    ['Pzas. compradas', num(Math.round(t.pzsCompradas))],
+    ['Pzas. vendidas', num(Math.round(t.pzsVendidas))],
+    ['% piezas', t.pctPiezas.toFixed(1)+'%'],
+    ['$ comprado', money(t.comprado)],
+    ['$ vendido', money(t.vendido)],
+    ['% venta', t.pctVenta.toFixed(1)+'%'],
+    ['Inventario piezas', num(Math.round(t.invPzs))]
+  ];
+  box.innerHTML=cards.map(([label,value])=>`<div class="productTotalCard"><div class="tLabel">${sanitizeHtml(label)}</div><div class="tValue">${sanitizeHtml(value)}</div></div>`).join('');
+}
+function productTotalForHeader(header, totals){
+  const h=norm(header);
+  if(h.includes('pzs compradas')||h.includes('piezas compradas'))return num(Math.round(totals.pzsCompradas));
+  if(h.includes('$ compra')||h.includes('$ comprado'))return money(totals.comprado);
+  if(h.includes('pzs vendidas')||h.includes('piezas vendidas'))return num(Math.round(totals.pzsVendidas));
+  if(h.includes('% pzs')||h.includes('% piezas'))return totals.pctPiezas.toFixed(1)+'%';
+  if(h.includes('$ vendido')||h.includes('$ venta'))return money(totals.vendido);
+  if(h.includes('% venta'))return totals.pctVenta.toFixed(1)+'%';
+  if(h.includes('inv. pzs')||h.includes('inventario piezas')||h.includes('inv pzs'))return num(Math.round(totals.invPzs));
+  if(h.includes('inv. $')||h.includes('inventario $'))return money(totals.invDinero);
+  return '';
+}
+function renderProductTotalsFooter(table, rows, displayIdx, cols){
+  let foot=table.querySelector('tfoot');
+  if(!foot){foot=document.createElement('tfoot');table.appendChild(foot)}
+  const totals=productTotalsFromRows(rows);
+  foot.innerHTML='<tr>'+displayIdx.map((i,pos)=>{
+    if(pos===0)return `<td class="totalLabel" colspan="3">Total filtrado</td>`;
+    if(pos<3)return '';
+    return `<td>${sanitizeHtml(productTotalForHeader(cols[i],totals))}</td>`;
+  }).join('')+'</tr>';
+}
+
+function renderProductsTable(){const table=document.getElementById('productTable'); if(!table)return; const filtered=sortProductRows(productFilteredRows()); const cols=productRows.headers||[]; const displayIdx=productDisplayIndices(); table.querySelector('thead').innerHTML='<tr>'+displayIdx.map(i=>`<th class="sortable ${productSort.index===i?'sorted':''}" onclick="setProductSort(${i})" title="${sanitizeHtml(cols[i])} · ordenar de mayor a menor / menor a mayor"><span class="sortHead"><span class="sortLabel">${sanitizeHtml(friendlyProductHeader(cols[i]))}</span><span class="sortIcon">${productSortIcon(i)}</span></span></th>`).join('')+'</tr>'; table.querySelector('tbody').innerHTML=filtered.map(r=>'<tr>'+displayIdx.map(i=>{const c=cols[i];if(i===0){return `<td>${r.image?`<img class="productImg" src="${r.image}">`:'<div class="productPlaceholder">SIN IMG</div>'}</td>`}const cls=i===1?'productModel':(i===2?'productDesc':(isProductNumericHeader(c)||norm(c).includes('meses de publicacion')?'productNum':''));const cellText=String(fmtProductCell(r.values[i],c)).replace(/<[^>]*>/g,'');return `<td class="${cls}" title="${sanitizeHtml(cellText)}">${fmtProductCell(r.values[i],c)}</td>`}).join('')+'</tr>').join('')||`<tr><td colspan="${displayIdx.length||1}" style="padding:24px;color:#777">Sin resultados.</td></tr>`; renderProductTotals(filtered); renderProductTotalsFooter(table, filtered, displayIdx, cols); const st=document.getElementById('productsStatus'); if(st)st.textContent=''; renderProductChips()}
 async function renderProductsFromWorkbook(wb,buf){try{const ws=wb.Sheets[wb.SheetNames[1]]; if(!ws){document.getElementById('productsStatus').textContent='No se encontró una segunda pestaña en el Excel.';return}const arr=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true}); const headerIndex=arr.findIndex(r=>r.some(v=>norm(v)==='imagen')&&r.some(v=>norm(v).startsWith('modelo'))); if(headerIndex<0){document.getElementById('productsStatus').textContent='No se detectó encabezado de productos en la pestaña 2.';return}const headers=arr[headerIndex].map(v=>String(v||'').trim()).filter((v,i)=>v||i<12); const imgByRow=await extractImagesFromSheet2(buf,wb); const rows=[]; for(let i=headerIndex+1;i<arr.length;i++){const excelRow=i+1; const values=arr[i].slice(0,headers.length); if(!values.some(v=>String(v||'').trim())&&!imgByRow[excelRow])continue; rows.push({values,image:imgByRow[excelRow]||'',search:productSearchText(values,headers)});} productRows=rows; productRows.headers=headers; productSort={index:null,dir:null}; Object.values(productFilterState).forEach(s=>s.clear()); refreshProductFilters(); renderProductsTable();}catch(err){document.getElementById('productsStatus').textContent='No se pudo renderizar la pestaña Productos: '+err.message;}}
 document.addEventListener('click',e=>{const btn=e.target.closest('.tabBtn'); if(!btn)return; document.querySelectorAll('.tabBtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.tabPanel').forEach(p=>p.classList.remove('active')); document.getElementById(btn.dataset.tab).classList.add('active');});
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='productSearch'){refreshProductFilters();renderProductsTable()}});
