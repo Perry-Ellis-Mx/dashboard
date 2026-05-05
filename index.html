@@ -1093,30 +1093,79 @@ function norm(s){return String(s??'').trim().normalize('NFD').replace(/[\u0300-\
 function get(row,names){const keys=Object.keys(row);for(const name of names){const target=norm(name);const k=keys.find(x=>norm(x)===target);if(k!==undefined)return row[k]}return undefined}
 function excelDate(v){
   if(v instanceof Date && !isNaN(v)) return v;
-  if(typeof v==='number'){
-    const d = XLSX?.SSF?.parse_date_code?.(v);
-    return d ? new Date(d.y, d.m-1, d.d) : null;
+
+  // Google Sheets CSV sometimes sends Excel serial dates as text, e.g. "46126.94961805556".
+  // This block converts both numeric serials and numeric strings to real dates.
+  function fromExcelSerial(n){
+    if(!isFinite(n)) return null;
+    // Excel serial dates for this report are around 45000-47000. Keep a broad safe range.
+    if(n > 20000 && n < 80000){
+      const whole = Math.floor(n);
+      const frac = n - whole;
+      const utc = Date.UTC(1899, 11, 30) + whole * 86400000 + Math.round(frac * 86400000);
+      const d = new Date(utc);
+      return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+    }
+    return null;
   }
-  if(typeof v==='string'){
+
+  if(typeof v === 'number'){
+    const serialDate = fromExcelSerial(v);
+    if(serialDate) return serialDate;
+    const d = XLSX?.SSF?.parse_date_code?.(v);
+    return d ? new Date(d.y, d.m - 1, d.d) : null;
+  }
+
+  if(typeof v === 'string'){
     let s = v.trim();
     if(!s) return null;
+
+    // Numeric string exported from Google Sheets / Excel serial date.
+    const numericCandidate = s.replace(/,/g,'');
+    if(/^\d+(\.\d+)?$/.test(numericCandidate)){
+      const serialDate = fromExcelSerial(Number(numericCandidate));
+      if(serialDate) return serialDate;
+    }
+
+    // dd/mm/yyyy, d/m/yyyy, dd-mm-yyyy
     let p = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
     if(p){
-      let day=Number(p[1]), month=Number(p[2]), year=Number(p[3]);
-      if(year<100) year+=2000;
-      return new Date(year, month-1, day);
+      let day = Number(p[1]);
+      let month = Number(p[2]);
+      let year = Number(p[3]);
+      if(year < 100) year += 2000;
+      return new Date(year, month - 1, day);
     }
+
+    // yyyy-mm-dd or yyyy/mm/dd
     p = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
-    if(p) return new Date(Number(p[1]), Number(p[2])-1, Number(p[3]));
-    const meses={enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,agosto:7,septiembre:8,setiembre:8,octubre:9,noviembre:10,diciembre:11,ene:0,feb:1,mar:2,abr:3,may:4,jun:5,jul:6,ago:7,sep:8,oct:9,nov:10,dic:11};
-    const clean=s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/,/g,'');
+    if(p) return new Date(Number(p[1]), Number(p[2]) - 1, Number(p[3]));
+
+    const meses = {
+      enero:0, febrero:1, marzo:2, abril:3, mayo:4, junio:5,
+      julio:6, agosto:7, septiembre:8, setiembre:8,
+      octubre:9, noviembre:10, diciembre:11,
+      ene:0, feb:1, mar:2, abr:3, may:4, jun:5,
+      jul:6, ago:7, sep:8, oct:9, nov:10, dic:11
+    };
+
+    const clean = s.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .replace(/,/g,'');
+
+    // 28 abril 2026 / 28 abr 2026
     p = clean.match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/);
-    if(p && meses[p[2]]!==undefined) return new Date(Number(p[3]), meses[p[2]], Number(p[1]));
+    if(p && meses[p[2]] !== undefined) return new Date(Number(p[3]), meses[p[2]], Number(p[1]));
+
+    // abril 28 2026 / abr 28 2026
     p = clean.match(/^([a-z]+)\s+(\d{1,2})\s+(\d{4})$/);
-    if(p && meses[p[1]]!==undefined) return new Date(Number(p[3]), meses[p[1]], Number(p[2]));
+    if(p && meses[p[1]] !== undefined) return new Date(Number(p[3]), meses[p[1]], Number(p[2]));
+
     let d = new Date(s);
     if(!isNaN(d)) return d;
   }
+
   return null;
 }
 function toNum(v){
