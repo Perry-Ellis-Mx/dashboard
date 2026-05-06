@@ -1538,7 +1538,14 @@ function loadRows(rows){
     const rawMes=get(r,['Mes','mes','MES','Mes ']);
     const rawDia=get(r,['Día','Dia','Day','Día ']);
 
-    let anio = yearFromAny(rawAnio) || (fecha ? fecha.getFullYear() : yearFromAny(rawFecha));
+    // Prioridad corregida:
+    // 1) Usar el año real de la fecha cuando sea 2025 o 2026.
+    // 2) Si Google Sheets exporta la fecha de forma ambigua, usar Año/Mes del sheet como respaldo.
+    const allowedYears = [2025, 2026];
+    const yearFromFecha = fecha ? fecha.getFullYear() : null;
+    const yearFromSheet = yearFromAny(rawAnio) || yearFromAny(rawMes) || yearFromAny(rawFecha);
+
+    let anio = allowedYears.includes(yearFromFecha) ? yearFromFecha : yearFromSheet;
     let mesNum = monthFromAny(rawMes) || (fecha ? fecha.getMonth()+1 : monthFromAny(rawFecha));
     let dia = toNum(rawDia) || (fecha ? fecha.getDate() : 1);
 
@@ -1549,13 +1556,14 @@ function loadRows(rows){
 
     if(!fecha || !anio || !mesNum){badDate++; continue}
 
-    // Seguridad: el reporte de ventas solo debe considerar 2025 y 2026.
-    // Esto evita años fantasma como 2024 causados por interpretación de fechas CSV.
+    // El reporte real solo debe contener 2025 y 2026.
+    // Si la fecha se interpretó como 2024 por formato CSV, se corrige usando Año/Mes del sheet.
     anio = Number(anio);
     mesNum = Number(mesNum);
     dia = Number(dia || fecha.getDate() || 1);
-    if(![2025, 2026].includes(anio)){
-      const yearText = String(rawFecha || '') + ' ' + String(rawAnio || '');
+
+    if(!allowedYears.includes(anio)){
+      const yearText = [rawFecha, rawAnio, rawMes].map(v=>String(v||'')).join(' ');
       const forcedYear = yearText.match(/\b(2025|2026)\b/);
       if(forcedYear){
         anio = Number(forcedYear[1]);
@@ -1564,6 +1572,7 @@ function loadRows(rows){
         continue;
       }
     }
+
     // Mantener la fecha interna alineada al año/mes válidos del reporte.
     if(fecha.getFullYear() !== anio || (fecha.getMonth()+1) !== mesNum){
       fecha = new Date(anio, mesNum-1, dia || 1);
