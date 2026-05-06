@@ -1154,6 +1154,32 @@
   color:#000 !important;
 }
 
+
+/* V83 - Semáforo Sell Through KPI + tabla */
+.stBadge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:4px 9px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  line-height:1;
+  border:1px solid transparent;
+  white-space:nowrap;
+}
+.stBadge.good{background:#e8f5ee;color:#137a3a;border-color:#cde8d8;}
+.stBadge.medium{background:#f2f2f2;color:#555;border-color:#dedede;}
+.stBadge.low{background:#fdeceb;color:#b42318;border-color:#f6cbc8;}
+.stWrap{display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;}
+.stValue{font-variant-numeric:tabular-nums;color:#111;}
+.productTotalCard .stBadge{margin-top:8px;}
+#productosTab .productTable .stWrap{width:100%;}
+#productosTab .productTable .stBadge{font-size:9px;padding:4px 7px;}
+
 </style>
 </head>
 <body>
@@ -1768,7 +1794,7 @@ function fmtProductCellComputed(row, header, totals){
   const h=norm(header);
   if(h.includes('% pzs')||h.includes('% piezas'))return totals.pzsVendidas?((productRowPzsVendidas(row)/totals.pzsVendidas)*100).toFixed(1)+'%':'0.0%';
   if(h.includes('% venta'))return totals.vendido?((productRowVendido(row)/totals.vendido)*100).toFixed(1)+'%':'0.0%';
-  if(h.includes('sell through')||h.includes('sell thro'))return productRowSellThrough(row).toFixed(1)+'%';
+  if(h.includes('sell through')||h.includes('sell thro'))return sellThroughBadgeHtml(productRowSellThrough(row));
   if(h.includes('$ compra')||h.includes('$ comprado'))return money(productRowComprado(row));
   if(h.includes('$ vendido')||h.includes('$ venta'))return money(productRowVendido(row));
   if(h.includes('inv. $')||h.includes('inventario $')||h.includes('$ inventario'))return money(productRowInventarioMoney(row));
@@ -1876,6 +1902,17 @@ function productRowInventarioMoney(row){
   return unit&&inv?unit*inv:0;
 }
 function productRowSellThrough(row){const comp=productRowPzsCompradas(row);return comp?productRowPzsVendidas(row)/comp*100:0}
+function sellThroughStatus(value){
+  const v=Number(value)||0;
+  if(v>=70)return {label:'BUENO',cls:'good'};
+  if(v>=40)return {label:'MEDIO',cls:'medium'};
+  return {label:'BAJO',cls:'low'};
+}
+function sellThroughBadgeHtml(value){
+  const v=Number(value)||0;
+  const st=sellThroughStatus(v);
+  return `<span class="stWrap"><span class="stValue">${v.toFixed(1)}%</span><span class="stBadge ${st.cls}">${st.label}</span></span>`;
+}
 
 function monthRangeLabel(value){
   if(value==null||isNaN(value))return '';
@@ -2028,7 +2065,11 @@ function renderProductTotals(rows){
     ['Inventario piezas', num(Math.round(t.invPzs)), 'inventory'],
     ['$ inventario', money(t.invDinero), 'inventory']
   ];
-  box.innerHTML=cards.map(([label,value,type])=>`<div class="productTotalCard ${type}"><div class="tLabel">${sanitizeHtml(label)}</div><div class="tValue">${sanitizeHtml(value)}</div></div>`).join('');
+  box.innerHTML=cards.map(([label,value,type])=>{
+    const isST = norm(label)==='sell through';
+    const badge = isST ? sellThroughBadgeHtml(t.sellThrough) : '';
+    return `<div class="productTotalCard ${type}"><div class="tLabel">${sanitizeHtml(label)}</div><div class="tValue">${sanitizeHtml(value)}</div>${badge}</div>`;
+  }).join('');
 }
 function productTotalForHeader(header, totals){
   const h=norm(header);
@@ -2038,7 +2079,7 @@ function productTotalForHeader(header, totals){
   if(h.includes('% pzs')||h.includes('% piezas'))return totals.pctPiezas.toFixed(1)+'%';
   if(h.includes('$ vendido')||h.includes('$ venta'))return money(totals.vendido);
   if(h.includes('% venta'))return totals.pctVenta.toFixed(1)+'%';
-  if(h.includes('sell through')||h.includes('sell thro'))return totals.sellThrough.toFixed(1)+'%';
+  if(h.includes('sell through')||h.includes('sell thro'))return sellThroughBadgeHtml(totals.sellThrough);
   if(h.includes('inv. pzs')||h.includes('inventario piezas')||h.includes('inv pzs'))return num(Math.round(totals.invPzs));
   if(h.includes('inv. $')||h.includes('inventario $')||h.includes('$ inventario'))return money(totals.invDinero);
   return '';
