@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Dashboard de Ventas | Perry Ellis México · V80 fórmulas productos</title>
+<title>Dashboard de Ventas | Perry Ellis México · V86 sell through limpio</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -1240,6 +1240,21 @@
   overflow:visible !important;
 }
 
+
+
+/* V86 - Sell Through KPI limpio: solo porcentaje principal */
+#productosTab .productTotalCard.performance .stWrap,
+#productosTab .productTotalCard.performance .stBadge,
+#productosTab .productTotalCard.performance .stValue{
+  display:none !important;
+}
+#productosTab .productTotalCard.performance{
+  background:#ffffff !important;
+  color:#111111 !important;
+  border:1px solid #e4e4e4 !important;
+  box-shadow:0 14px 34px rgba(0,0,0,.04) !important;
+}
+
 </style>
 </head>
 <body>
@@ -2136,9 +2151,7 @@ function renderProductTotals(rows){
     ['$ inventario', money(t.invDinero), 'inventory']
   ];
   box.innerHTML=cards.map(([label,value,type])=>{
-    const isST = norm(label)==='sell through';
-    const badge = isST ? sellThroughBadgeHtml(t.sellThrough) : '';
-    return `<div class="productTotalCard ${type}"><div class="tLabel">${sanitizeHtml(label)}</div><div class="tValue">${sanitizeHtml(value)}</div>${badge}</div>`;
+    return `<div class="productTotalCard ${type}"><div class="tLabel">${sanitizeHtml(label)}</div><div class="tValue">${sanitizeHtml(value)}</div></div>`;
   }).join('');
 }
 function productTotalForHeader(header, totals){
@@ -2149,7 +2162,7 @@ function productTotalForHeader(header, totals){
   if(h.includes('% pzs')||h.includes('% piezas'))return totals.pctPiezas.toFixed(1)+'%';
   if(h.includes('$ vendido')||h.includes('$ venta'))return money(totals.vendido);
   if(h.includes('% venta'))return totals.pctVenta.toFixed(1)+'%';
-  if(h.includes('sell through')||h.includes('sell thro'))return sellThroughBadgeHtml(totals.sellThrough);
+  if(h.includes('sell through')||h.includes('sell thro'))return totals.sellThrough.toFixed(1)+'%';
   if(h.includes('inv. pzs')||h.includes('inventario piezas')||h.includes('inv pzs'))return num(Math.round(totals.invPzs));
   if(h.includes('inv. $')||h.includes('inventario $')||h.includes('$ inventario'))return money(totals.invDinero);
   return '';
