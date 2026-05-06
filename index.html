@@ -1529,66 +1529,87 @@ function yearFromAny(v){
 }
 
 function loadRows(rows){
-  const mapped=[];let badDate=0;
+  const mapped=[]; let badDate=0;
+  const allowedYears = [2025, 2026];
+  const originDebug = {rawRows: rows.length, omitted: 0, byYear:{}, byMonth:{}};
+
   for(const r of rows){
     const rawFecha=get(r,['Fecha','fecha','FECHA']);
-    let fecha=excelDate(rawFecha);
-
     const rawAnio=get(r,['Año','Anio','Year','Año ']);
     const rawMes=get(r,['Mes','mes','MES','Mes ']);
     const rawDia=get(r,['Día','Dia','Day','Día ']);
 
-    // Prioridad corregida:
-    // 1) Usar el año real de la fecha cuando sea 2025 o 2026.
-    // 2) Si Google Sheets exporta la fecha de forma ambigua, usar Año/Mes del sheet como respaldo.
-    const allowedYears = [2025, 2026];
-    const yearFromFecha = fecha ? fecha.getFullYear() : null;
-    const yearFromSheet = yearFromAny(rawAnio) || yearFromAny(rawMes) || yearFromAny(rawFecha);
+    // 🔥 CORRECCIÓN CLAVE:
+    // Para Google Sheets se toma primero la columna AÑO y MES del origen.
+    // La fecha queda como respaldo, porque Google puede exportar fechas ambiguas.
+    const fechaParsed = excelDate(rawFecha);
+    let anio = yearFromAny(rawAnio);
+    let mesNum = monthFromAny(rawMes);
+    let dia = toNum(rawDia) || (fechaParsed ? fechaParsed.getDate() : 1);
 
-    let anio = allowedYears.includes(yearFromFecha) ? yearFromFecha : yearFromSheet;
-    let mesNum = monthFromAny(rawMes) || (fecha ? fecha.getMonth()+1 : monthFromAny(rawFecha));
-    let dia = toNum(rawDia) || (fecha ? fecha.getDate() : 1);
+    // Respaldo si no viene Año/Mes explícito.
+    if(!anio && fechaParsed) anio = fechaParsed.getFullYear();
+    if(!mesNum && fechaParsed) mesNum = fechaParsed.getMonth()+1;
 
-    // Fallback especial: si no hay Fecha válida, pero sí Año + Mes, construye fecha.
-    if(!fecha && anio && mesNum){
-      fecha = new Date(anio, mesNum-1, dia || 1);
-    }
-
-    if(!fecha || !anio || !mesNum){badDate++; continue}
-
-    // El reporte real solo debe contener 2025 y 2026.
-    // Si la fecha se interpretó como 2024 por formato CSV, se corrige usando Año/Mes del sheet.
     anio = Number(anio);
     mesNum = Number(mesNum);
-    dia = Number(dia || fecha.getDate() || 1);
+    dia = Number(dia || 1);
 
+    // Si el Año/Mes no es válido, intentamos rescatar desde textos.
     if(!allowedYears.includes(anio)){
-      const yearText = [rawFecha, rawAnio, rawMes].map(v=>String(v||'')).join(' ');
-      const forcedYear = yearText.match(/\b(2025|2026)\b/);
-      if(forcedYear){
-        anio = Number(forcedYear[1]);
-      }else{
-        badDate++;
-        continue;
-      }
+      const txt = [rawFecha, rawAnio, rawMes].map(v=>String(v||'')).join(' ');
+      const m = txt.match(/\b(2025|2026)\b/);
+      if(m) anio = Number(m[1]);
     }
 
-    // Mantener la fecha interna alineada al año/mes válidos del reporte.
-    if(fecha.getFullYear() !== anio || (fecha.getMonth()+1) !== mesNum){
-      fecha = new Date(anio, mesNum-1, dia || 1);
+    if(!mesNum || mesNum < 1 || mesNum > 12){
+      mesNum = monthFromAny(rawFecha);
     }
+
+    if(!allowedYears.includes(anio) || !mesNum || mesNum < 1 || mesNum > 12){
+      badDate++; originDebug.omitted++;
+      continue;
+    }
+
+    // La fecha interna se reconstruye con Año + Mes correctos del origen.
+    const fecha = new Date(anio, mesNum-1, dia || 1);
 
     const venta=toNum(get(r,['Total de Venta','Total Venta','Venta','Ventas','Importe','Total']));
-    const costo=toNum(get(r,['Costo','Costos'])); const pares=toNum(get(r,['Pares','Unidades','Cantidad']));
+    const costo=toNum(get(r,['Costo','Costos']));
+    const pares=toNum(get(r,['Pares','Unidades','Cantidad']));
     const semana=toNum(get(r,['Número de Semana','Numero de Semana','Semana','Week']))||'';
     const estado=String(get(r,['Estado'])??'').trim();
-    mapped.push({fecha,anio,mesNum,mesNombre:M[mesNum-1],semana:String(semana),dia:String(dia||fecha.getDate()),estado:estado||'Sin información',canal:cleanChannel(get(r,['Canal'])),proveedor:String(get(r,['Proveedor','Provider','Vendor','Supplier'])??'Sin información').trim()||'Sin información',categoria:String(get(r,['Categoría','Categoria'])??'Sin información').trim()||'Sin información',estilo:(String(get(r,['Estilo','Style'])??'').trim() || String(get(r,['Modelo'])??'Sin información').trim() || 'Sin información'),modelo:String(get(r,['Modelo'])??'Sin información').trim()||'Sin información',sku:String(get(r,['Sku','SKU'])??'').trim(),temporada:String(get(r,['Temporada','Season'])??'').trim(),resurtido:cleanResurtido(get(r,['Resurtido'])),venta,costo,pares});
+
+    originDebug.byYear[anio]=(originDebug.byYear[anio]||0)+venta;
+    const ym=`${anio}-${String(mesNum).padStart(2,'0')}`;
+    originDebug.byMonth[ym]=(originDebug.byMonth[ym]||0)+venta;
+
+    mapped.push({
+      fecha, anio, mesNum, mesNombre:M[mesNum-1], semana:String(semana), dia:String(dia||fecha.getDate()),
+      estado:estado||'Sin información',
+      canal:cleanChannel(get(r,['Canal'])),
+      proveedor:String(get(r,['Proveedor','Provider','Vendor','Supplier'])??'Sin información').trim()||'Sin información',
+      categoria:String(get(r,['Categoría','Categoria'])??'Sin información').trim()||'Sin información',
+      estilo:(String(get(r,['Estilo','Style'])??'').trim() || String(get(r,['Modelo'])??'Sin información').trim() || 'Sin información'),
+      modelo:String(get(r,['Modelo'])??'Sin información').trim()||'Sin información',
+      sku:String(get(r,['Sku','SKU'])??'').trim(),
+      temporada:String(get(r,['Temporada','Season'])??'').trim(),
+      resurtido:cleanResurtido(get(r,['Resurtido'])),
+      venta,costo,pares
+    });
   }
-  state.raw=mapped; state.data=mapped; document.getElementById('status').innerHTML=`Datos cargados: <b>${mapped.length}</b> registros válidos. ${badDate?badDate+' filas sin fecha/mes fueron omitidas.':''}`;
-  document.getElementById('empty').style.display=mapped.length?'none':'block'; const dash=document.getElementById('dashboard'); dash.style.display=mapped.length?'block':'none'; if(mapped.length){dash.classList.remove('dashboardFade'); void dash.offsetWidth; dash.classList.add('dashboardFade');}
-  if(!mapped.length){showDebug('No se encontraron filas válidas. Revisa que exista Fecha o Año + Mes.');return}
+
+  state.raw=mapped; state.data=mapped;
+  console.log('Validación origen ventas:', originDebug);
+  document.getElementById('status').innerHTML=`Datos cargados: <b>${mapped.length}</b> registros válidos. ${badDate?badDate+' filas fuera de 2025/2026 o sin Año/Mes fueron omitidas.':''}`;
+  document.getElementById('empty').style.display=mapped.length?'none':'block';
+  const dash=document.getElementById('dashboard');
+  dash.style.display=mapped.length?'block':'none';
+  if(mapped.length){dash.classList.remove('dashboardFade'); void dash.offsetWidth; dash.classList.add('dashboardFade');}
+  if(!mapped.length){showDebug('No se encontraron filas válidas. Revisa que exista Año y Mes en Google Sheets.');return}
   buildFilters(); renderVentasAcumuladasInicio(); render();
 }
+
 function currentFilteredExcept(skipKey){return state.raw.filter(r=>Object.entries(state.filters).every(([k,set])=>k===skipKey||!set.size||set.has(String(r[k]))))}
 function valuesFor(key,base){let arr=[...new Set(base.map(x=>x[key]).filter(x=>x!==''&&x!=null&&x!=='Sin información'))]; if(key==='mesNombre')arr.sort((a,b)=>M.indexOf(a)-M.indexOf(b)); else if(['anio','semana','dia'].includes(key))arr.sort((a,b)=>Number(a)-Number(b)); else arr.sort((a,b)=>String(a).localeCompare(String(b),'es')); return arr}
 function refreshFilters(changedKey=null){['anio','mesNombre','semana','dia','estado','canal'].forEach(key=>{
