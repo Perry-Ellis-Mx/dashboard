@@ -1087,6 +1087,46 @@
 #productosTab .productsHead{margin-top:0 !important;margin-bottom:10px !important;}
 #productosTab .productsTitle{gap:0 !important;}
 #productosTab .productSearchBox{margin-top:0 !important;}
+
+
+/* V79 - KPIs productos optimizados */
+.productTotals{
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr)) !important;
+  gap:12px !important;
+  margin:0 0 18px !important;
+}
+.productTotalCard{
+  padding:15px 16px !important;
+  border-radius:18px !important;
+  background:#fff !important;
+  border:1px solid #e4e4e4 !important;
+  box-shadow:0 14px 34px rgba(0,0,0,.04) !important;
+}
+.productTotalCard.primary{
+  border-color:#000 !important;
+}
+.productTotalCard.performance{
+  background:#000 !important;
+  color:#fff !important;
+  border-color:#000 !important;
+}
+.productTotalCard.performance .tLabel,
+.productTotalCard.performance .tValue{
+  color:#fff !important;
+}
+.productTotalCard.inventory{
+  background:#fafafa !important;
+}
+.productTotalCard .tLabel{
+  font-size:10px !important;
+  letter-spacing:.12em !important;
+  color:#777 !important;
+}
+.productTotalCard .tValue{
+  font-size:21px !important;
+  font-weight:800 !important;
+}
+
 </style>
 </head>
 <body>
@@ -1920,18 +1960,16 @@ function renderProductTotals(rows){
   if(!box)return;
   const t=productTotalsFromRows(rows);
   const cards=[
-    ['Productos filtrados', num(t.registros)],
-    ['Pzas. compradas', num(Math.round(t.pzsCompradas))],
-    ['Pzas. vendidas', num(Math.round(t.pzsVendidas))],
-    ['% piezas vendidas', t.pctPiezas.toFixed(1)+'%'],
-    ['$ comprado', money(t.comprado)],
-    ['$ vendido', money(t.vendido)],
-    ['% venta', t.pctVenta.toFixed(1)+'%'],
-    ['Sell Through', t.sellThrough.toFixed(1)+'%'],
-    ['Inventario piezas', num(Math.round(t.invPzs))],
-    ['$ inventario', money(t.invDinero)]
+    ['Productos filtrados', num(t.registros), 'neutral'],
+    ['$ vendido', money(t.vendido), 'primary'],
+    ['Pzas. vendidas', num(Math.round(t.pzsVendidas)), 'primary'],
+    ['Sell Through', t.sellThrough.toFixed(1)+'%', 'performance'],
+    ['$ comprado', money(t.comprado), 'neutral'],
+    ['Pzas. compradas', num(Math.round(t.pzsCompradas)), 'neutral'],
+    ['Inventario piezas', num(Math.round(t.invPzs)), 'inventory'],
+    ['$ inventario', money(t.invDinero), 'inventory']
   ];
-  box.innerHTML=cards.map(([label,value])=>`<div class="productTotalCard"><div class="tLabel">${sanitizeHtml(label)}</div><div class="tValue">${sanitizeHtml(value)}</div></div>`).join('');
+  box.innerHTML=cards.map(([label,value,type])=>`<div class="productTotalCard ${type}"><div class="tLabel">${sanitizeHtml(label)}</div><div class="tValue">${sanitizeHtml(value)}</div></div>`).join('');
 }
 function productTotalForHeader(header, totals){
   const h=norm(header);
