@@ -1205,6 +1205,41 @@
 .stBadge.medium{background:#f2f2f2 !important;color:#666 !important;border-color:#dedede !important;}
 .stBadge.low{background:#fdecea !important;color:#c62828 !important;border-color:#f6cbc8 !important;}
 
+
+/* V85 - KPIs Productos uniformes sin contorno negro + chips activos */
+#productosTab .productTotalCard,
+#productosTab .productTotalCard.primary,
+#productosTab .productTotalCard.performance,
+#productosTab .productTotalCard.inventory{
+  background:#ffffff !important;
+  color:#111111 !important;
+  border:1px solid #e4e4e4 !important;
+  box-shadow:0 14px 34px rgba(0,0,0,.04) !important;
+}
+#productosTab .productTotalCard .tLabel,
+#productosTab .productTotalCard.primary .tLabel,
+#productosTab .productTotalCard.performance .tLabel,
+#productosTab .productTotalCard.inventory .tLabel{
+  color:#777777 !important;
+}
+#productosTab .productTotalCard .tValue,
+#productosTab .productTotalCard.primary .tValue,
+#productosTab .productTotalCard.performance .tValue,
+#productosTab .productTotalCard.inventory .tValue{
+  color:#000000 !important;
+}
+#activeProductFilters,
+.productChips,
+.chips.productChips{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  gap:8px !important;
+  margin:10px 0 14px !important;
+  height:auto !important;
+  padding:0 !important;
+  overflow:visible !important;
+}
+
 </style>
 </head>
 <body>
@@ -1861,7 +1896,17 @@ const productFilterLabels={categoria:'Categoría',estilo:'Estilo',proveedor:'Pro
 
 function renderProductChips(){
   const container=document.getElementById('activeProductFilters');
-  if(container) container.innerHTML='';
+  if(!container)return;
+  container.innerHTML='';
+  Object.entries(productFilterState).forEach(([key,set])=>{
+    set.forEach(value=>{
+      makeChip(container,productFilterLabels[key]||key,value,()=>{
+        productFilterState[key].delete(value);
+        refreshProductFilters();
+        renderProductsTable();
+      });
+    });
+  });
 }
 
 const productRangeOrder={
