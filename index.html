@@ -1255,6 +1255,24 @@
   box-shadow:0 14px 34px rgba(0,0,0,.04) !important;
 }
 
+
+
+/* V87 - Ajustes finales: columna Tipo completa y sin año 2024 */
+#productosTab .productTable th:nth-child(19),
+#productosTab .productTable td:nth-child(19){
+  width:120px !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  word-break:normal !important;
+  overflow-wrap:break-word !important;
+  text-align:center !important;
+}
+#productosTab .productTable td:nth-child(19){
+  font-size:12px !important;
+  line-height:1.25 !important;
+}
+
 </style>
 </head>
 <body>
@@ -1530,6 +1548,26 @@ function loadRows(rows){
     }
 
     if(!fecha || !anio || !mesNum){badDate++; continue}
+
+    // Seguridad: el reporte de ventas solo debe considerar 2025 y 2026.
+    // Esto evita años fantasma como 2024 causados por interpretación de fechas CSV.
+    anio = Number(anio);
+    mesNum = Number(mesNum);
+    dia = Number(dia || fecha.getDate() || 1);
+    if(![2025, 2026].includes(anio)){
+      const yearText = String(rawFecha || '') + ' ' + String(rawAnio || '');
+      const forcedYear = yearText.match(/\b(2025|2026)\b/);
+      if(forcedYear){
+        anio = Number(forcedYear[1]);
+      }else{
+        badDate++;
+        continue;
+      }
+    }
+    // Mantener la fecha interna alineada al año/mes válidos del reporte.
+    if(fecha.getFullYear() !== anio || (fecha.getMonth()+1) !== mesNum){
+      fecha = new Date(anio, mesNum-1, dia || 1);
+    }
 
     const venta=toNum(get(r,['Total de Venta','Total Venta','Venta','Ventas','Importe','Total']));
     const costo=toNum(get(r,['Costo','Costos'])); const pares=toNum(get(r,['Pares','Unidades','Cantidad']));
