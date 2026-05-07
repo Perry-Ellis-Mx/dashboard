@@ -1337,6 +1337,24 @@
   display:block;
   border-radius:14px;
   background:#fff;
+  transition:transform .18s ease;
+  cursor:zoom-in;
+  transform-origin:center center;
+}
+#productLightbox .lightboxInner{
+  overflow:hidden;
+}
+#productLightbox .zoomHint{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#fff;
+  background:rgba(0,0,0,.45);
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:11px;
+  letter-spacing:.03em;
 }
 #productosTab .productImg{
   cursor:zoom-in !important;
@@ -1430,6 +1448,7 @@
   <div class="lightboxInner">
     <img id="productLightboxImg" src="" alt="Imagen de producto ampliada">
   </div>
+  <div class="zoomHint">Scroll para zoom · doble clic para reiniciar · Esc para cerrar</div>
 </div>
 
 <script>
@@ -2516,32 +2535,58 @@ document.getElementById('fileInput').addEventListener('change',async e=>{const f
 loadFromSheets();
 document.querySelectorAll('.filter button').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const f=b.closest('.filter');document.querySelectorAll('.filter').forEach(x=>{if(x!==f)x.classList.remove('open')});f.classList.toggle('open')}));document.addEventListener('click',e=>{if(!e.target.closest('.filter'))document.querySelectorAll('.filter').forEach(x=>x.classList.remove('open'))});document.getElementById('clearBtn').addEventListener('click',()=>{Object.values(state.filters).forEach(s=>s.clear());refreshFilters();render()});
 
-// V94 - Lightbox para ampliar imágenes de producto
+// V95 - Lightbox con zoom para imágenes de producto
 (function(){
   const lightbox = document.getElementById('productLightbox');
   const lightboxImg = document.getElementById('productLightboxImg');
   if(!lightbox || !lightboxImg) return;
 
+  let zoom = 1;
+
+  function resetZoom(){
+    zoom = 1;
+    lightboxImg.style.transform = 'scale(1)';
+    lightboxImg.style.cursor = 'zoom-in';
+  }
+
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden','true');
+    lightboxImg.src = '';
+    resetZoom();
+  }
+
   document.addEventListener('click', function(e){
     const img = e.target.closest && e.target.closest('#productosTab .productImg');
     if(img && img.src){
       lightboxImg.src = img.src;
+      resetZoom();
       lightbox.classList.add('open');
       lightbox.setAttribute('aria-hidden','false');
       return;
     }
     if(e.target === lightbox){
-      lightbox.classList.remove('open');
-      lightbox.setAttribute('aria-hidden','true');
-      lightboxImg.src = '';
+      closeLightbox();
     }
+  });
+
+  lightboxImg.addEventListener('wheel', function(e){
+    if(!lightbox.classList.contains('open')) return;
+    e.preventDefault();
+    zoom += e.deltaY < 0 ? 0.15 : -0.15;
+    zoom = Math.min(Math.max(1, zoom), 5);
+    lightboxImg.style.transform = `scale(${zoom})`;
+    lightboxImg.style.cursor = zoom > 1 ? 'zoom-out' : 'zoom-in';
+  }, {passive:false});
+
+  lightboxImg.addEventListener('dblclick', function(e){
+    e.preventDefault();
+    resetZoom();
   });
 
   document.addEventListener('keydown', function(e){
     if(e.key === 'Escape' && lightbox.classList.contains('open')){
-      lightbox.classList.remove('open');
-      lightbox.setAttribute('aria-hidden','true');
-      lightboxImg.src = '';
+      closeLightbox();
     }
   });
 })();
