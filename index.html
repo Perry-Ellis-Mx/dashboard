@@ -1306,6 +1306,47 @@
   text-align:center !important;
 }
 
+
+/* V94 - Lightbox para imágenes de productos */
+#productLightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.62);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  padding:32px;
+}
+#productLightbox.open{display:flex;}
+#productLightbox .lightboxInner{
+  background:#ffffff;
+  border-radius:22px;
+  padding:20px;
+  box-shadow:0 28px 80px rgba(0,0,0,.28);
+  max-width:min(760px,92vw);
+  max-height:90vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#productLightbox img{
+  max-width:100%;
+  max-height:78vh;
+  object-fit:contain;
+  display:block;
+  border-radius:14px;
+  background:#fff;
+}
+#productosTab .productImg{
+  cursor:zoom-in !important;
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+#productosTab .productImg:hover{
+  transform:scale(1.04);
+  box-shadow:0 10px 24px rgba(0,0,0,.10);
+}
+
 </style>
 </head>
 <body>
@@ -1384,6 +1425,12 @@
     
   </div>
 </div><!-- /productosTab -->
+
+<div id="productLightbox" aria-hidden="true">
+  <div class="lightboxInner">
+    <img id="productLightboxImg" src="" alt="Imagen de producto ampliada">
+  </div>
+</div>
 
 <script>
 const M=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -2468,6 +2515,37 @@ document.getElementById('fileInput').addEventListener('change',async e=>{const f
 // Carga automática desde Google Sheets al abrir el dashboard
 loadFromSheets();
 document.querySelectorAll('.filter button').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const f=b.closest('.filter');document.querySelectorAll('.filter').forEach(x=>{if(x!==f)x.classList.remove('open')});f.classList.toggle('open')}));document.addEventListener('click',e=>{if(!e.target.closest('.filter'))document.querySelectorAll('.filter').forEach(x=>x.classList.remove('open'))});document.getElementById('clearBtn').addEventListener('click',()=>{Object.values(state.filters).forEach(s=>s.clear());refreshFilters();render()});
+
+// V94 - Lightbox para ampliar imágenes de producto
+(function(){
+  const lightbox = document.getElementById('productLightbox');
+  const lightboxImg = document.getElementById('productLightboxImg');
+  if(!lightbox || !lightboxImg) return;
+
+  document.addEventListener('click', function(e){
+    const img = e.target.closest && e.target.closest('#productosTab .productImg');
+    if(img && img.src){
+      lightboxImg.src = img.src;
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden','false');
+      return;
+    }
+    if(e.target === lightbox){
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden','true');
+      lightboxImg.src = '';
+    }
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && lightbox.classList.contains('open')){
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden','true');
+      lightboxImg.src = '';
+    }
+  });
+})();
+
 </script>
 </body>
 </html>
