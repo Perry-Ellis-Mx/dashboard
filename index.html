@@ -1446,6 +1446,63 @@
   cursor:col-resize !important;
 }
 
+
+
+/* V97 - Quitar movimiento/hover en tabla Productos */
+#productosTab table,
+#productosTab th,
+#productosTab td,
+#productosTab tr,
+.productTable,
+.productTable th,
+.productTable td,
+.productTable tr {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+}
+
+#productosTab tr:hover,
+#productosTab td:hover,
+#productosTab th:hover,
+.productTable tr:hover,
+.productTable td:hover,
+.productTable th:hover {
+  background: #fff !important;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: default !important;
+}
+
+/* Mantener encabezado negro sin cambio al pasar cursor */
+#productosTab .productTable th:hover,
+.productTable th:hover {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+/* Evitar efectos en columnas congeladas */
+#productosTab .sticky1,
+#productosTab .sticky2,
+.productTable .sticky1,
+.productTable .sticky2 {
+  transition: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Mantener fondo blanco en filas y celdas */
+#productosTab tbody tr,
+#productosTab tbody td,
+.productTable tbody tr,
+.productTable tbody td {
+  background:#fff !important;
+}
+
+/* Cursor solo en imagen y resize de columnas */
+#productosTab .productImg { cursor: zoom-in !important; }
+#productosTab .colResizer { cursor: col-resize !important; }
+
 </style>
 </head>
 <body>
