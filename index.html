@@ -34,23 +34,26 @@ body{
 }
 
 .wrap{
-  max-width:1500px;
+  max-width:1600px;
   margin:0 auto;
-  padding:30px 26px 56px;
+  padding:30px;
 }
 
 .logo{
   font-weight:800;
   font-size:28px;
   letter-spacing:.22em;
+  margin-bottom:20px;
 }
+
+/* TABS */
 
 .tabs{
   display:flex;
-  gap:8px;
+  gap:10px;
   border-bottom:1px solid #eee;
-  padding-bottom:8px;
-  margin-bottom:18px;
+  margin-bottom:20px;
+  padding-bottom:10px;
 }
 
 .tabBtn{
@@ -78,7 +81,38 @@ body{
   display:block;
 }
 
-/* PRODUCTOS */
+/* KPIS */
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:20px;
+}
+
+.kpi{
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+
+.kpi span{
+  display:block;
+  font-size:11px;
+  color:#777;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+
+.kpi strong{
+  display:block;
+  margin-top:10px;
+  font-size:26px;
+}
+
+/* TABLA */
 
 .productTableWrap{
   width:100%;
@@ -91,7 +125,7 @@ body{
 
 .productTable{
   width:max-content;
-  min-width:2100px;
+  min-width:2400px;
   border-collapse:separate;
   border-spacing:0;
   table-layout:fixed;
@@ -150,7 +184,12 @@ body{
 
 .productTable th:nth-child(3),
 .productTable td:nth-child(3){
-  width:380px;
+  width:420px;
+}
+
+.productTable th:nth-child(n+4),
+.productTable td:nth-child(n+4){
+  width:120px;
 }
 
 /* FREEZE */
@@ -181,7 +220,7 @@ body{
   color:#fff !important;
 }
 
-/* IMAGENES */
+/* IMAGEN */
 
 .productImg{
   width:76px;
@@ -247,14 +286,36 @@ PERRY ELLIS
 </div>
 
 <div class="tabs">
-<button class="tabBtn active" data-tab="productosTab">Productos</button>
+<button class="tabBtn active">Productos</button>
 </div>
 
-<div id="productosTab" class="tabPanel active">
+<div class="kpis">
+
+<div class="kpi">
+<span>$ Vendido</span>
+<strong id="kpiVendido">$0</strong>
+</div>
+
+<div class="kpi">
+<span>Pzas Vendidas</span>
+<strong id="kpiVendidas">0</strong>
+</div>
+
+<div class="kpi">
+<span>Sell Through</span>
+<strong id="kpiSell">0%</strong>
+</div>
+
+<div class="kpi">
+<span>$ Inventario</span>
+<strong id="kpiInv">$0</strong>
+</div>
+
+</div>
 
 <div class="productTableWrap">
 
-<table class="productTable" id="productTable">
+<table class="productTable">
 
 <thead>
 
@@ -281,11 +342,23 @@ Proveedor
 </th>
 
 <th>
-$ Vendido
+Precio Venta
+</th>
+
+<th>
+Pzas Compradas
+</th>
+
+<th>
+$ Comprado
 </th>
 
 <th>
 Pzas Vendidas
+</th>
+
+<th>
+$ Vendido
 </th>
 
 <th>
@@ -294,6 +367,18 @@ Sell Through
 
 <th>
 Inventario
+</th>
+
+<th>
+$ Inventario
+</th>
+
+<th>
+Meses Publicación
+</th>
+
+<th>
+Tipo
 </th>
 
 </tr>
@@ -310,13 +395,14 @@ Inventario
 
 </div>
 
-</div>
-
 <div id="lightbox">
+
 <img id="lightboxImg">
+
 <div id="lightboxHelp">
 Scroll para zoom · doble clic para reset · Esc para cerrar
 </div>
+
 </div>
 
 <script>
@@ -408,6 +494,17 @@ function num(n){
   .format(Number(n)||0);
 }
 
+function parseNum(v){
+
+  if(!v) return 0;
+
+  return Number(
+    String(v)
+    .replace(/\$/g,'')
+    .replace(/,/g,'')
+  ) || 0;
+}
+
 async function loadProducts(){
 
   const text = await fetch(PRODUCTOS_URL)
@@ -417,9 +514,31 @@ async function loadProducts(){
 
   let html = "";
 
+  let vendido = 0;
+  let compradas = 0;
+  let vendidas = 0;
+  let inventario = 0;
+
   data.forEach(r=>{
 
     const img = r["Imagen"] || "";
+
+    const vendidoRow =
+    parseNum(r["$ Vendido"]);
+
+    const compradasRow =
+    parseNum(r["Pzas Compradas"]);
+
+    const vendidasRow =
+    parseNum(r["Pzas Vendidas"]);
+
+    const inventarioRow =
+    parseNum(r["$ Inventario"]);
+
+    vendido += vendidoRow;
+    compradas += compradasRow;
+    vendidas += vendidasRow;
+    inventario += inventarioRow;
 
     html += `
 
@@ -463,11 +582,23 @@ async function loadProducts(){
       </td>
 
       <td>
-        ${money(r["$ Vendido"] || 0)}
+        ${money(r["Precio Venta"] || 0)}
+      </td>
+
+      <td>
+        ${num(r["Pzas Compradas"] || 0)}
+      </td>
+
+      <td>
+        ${money(r["$ Comprado"] || 0)}
       </td>
 
       <td>
         ${num(r["Pzas Vendidas"] || 0)}
+      </td>
+
+      <td>
+        ${money(r["$ Vendido"] || 0)}
       </td>
 
       <td>
@@ -478,6 +609,18 @@ async function loadProducts(){
         ${num(r["Inventario"] || 0)}
       </td>
 
+      <td>
+        ${money(r["$ Inventario"] || 0)}
+      </td>
+
+      <td>
+        ${r["Meses Publicación"] || ""}
+      </td>
+
+      <td>
+        ${r["Tipo"] || ""}
+      </td>
+
     </tr>
 
     `;
@@ -485,6 +628,19 @@ async function loadProducts(){
 
   document.getElementById("productBody")
   .innerHTML = html;
+
+  document.getElementById("kpiVendido")
+  .textContent = money(vendido);
+
+  document.getElementById("kpiVendidas")
+  .textContent = num(vendidas);
+
+  document.getElementById("kpiSell")
+  .textContent =
+  ((vendidas/compradas)*100).toFixed(1)+"%";
+
+  document.getElementById("kpiInv")
+  .textContent = money(inventario);
 }
 
 loadProducts();
