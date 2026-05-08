@@ -3,713 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Dashboard Perry Ellis México</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <style>
-
 :root{
-  --bg:#ffffff;
-  --ink:#000000;
-  --muted:#666666;
-  --line:#e8e8e8;
-  --card:#ffffff;
-  --shadow:0 12px 34px rgba(0,0,0,.045);
-  --radius:20px;
+  --bg:#ffffff; --ink:#000000; --muted:#666666; --line:#e8e8e8; --soft:#f7f7f7;
+  --card:#ffffff; --shadow:0 12px 34px rgba(0,0,0,.045); --radius:20px;
 }
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font-family:"Nunito Sans",Arial,sans-serif;
-}
-
-.wrap{
-  max-width:1600px;
-  margin:0 auto;
-  padding:30px;
-}
-
-.logo{
-  font-weight:800;
-  font-size:28px;
-  letter-spacing:.22em;
-  margin-bottom:20px;
-}
-
-/* TABS */
-
-.tabs{
-  display:flex;
-  gap:10px;
-  border-bottom:1px solid #eee;
-  margin-bottom:20px;
-  padding-bottom:10px;
-}
-
-.tabBtn{
-  border:1px solid #ddd;
-  background:#fff;
-  border-radius:999px;
-  padding:10px 18px;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  cursor:pointer;
-}
-
-.tabBtn.active{
-  background:#000;
-  color:#fff;
-}
-
-.tabPanel{
-  display:none;
-}
-
-.tabPanel.active{
-  display:block;
-}
-
-/* KPIS */
-
-.kpis{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-  margin-bottom:20px;
-}
-
-.kpi{
-  background:#fff;
-  border:1px solid #eee;
-  border-radius:20px;
-  padding:18px;
-  box-shadow:var(--shadow);
-}
-
-.kpi span{
-  display:block;
-  font-size:11px;
-  color:#777;
-  text-transform:uppercase;
-  letter-spacing:.1em;
-}
-
-.kpi strong{
-  display:block;
-  margin-top:10px;
-  font-size:26px;
-}
-
-/* TABLA */
-
-.productTableWrap{
-  width:100%;
-  overflow:auto;
-  border:1px solid #eee;
-  border-radius:20px;
-  box-shadow:var(--shadow);
-  background:#fff;
-}
-
-.productTable{
-  width:max-content;
-  min-width:2400px;
-  border-collapse:separate;
-  border-spacing:0;
-  table-layout:fixed;
-}
-
-.productTable th,
-.productTable td{
-  padding:12px 10px;
-  border-bottom:1px solid #eee;
-  border-right:1px solid #f3f3f3;
-  font-size:12px;
-  background:#fff;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-
-  transition:none !important;
-  transform:none !important;
-  animation:none !important;
-  box-shadow:none !important;
-}
-
-.productTable th{
-  position:sticky;
-  top:0;
-  background:#000 !important;
-  color:#fff !important;
-  z-index:5;
-  font-size:10px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-  height:64px;
-}
-
-.productTable tr:hover td,
-.productTable td:hover,
-.productTable th:hover{
-  background:inherit !important;
-  transform:none !important;
-  box-shadow:none !important;
-}
-
-/* ANCHOS */
-
-.productTable th:nth-child(1),
-.productTable td:nth-child(1){
-  width:96px;
-  text-align:center;
-}
-
-.productTable th:nth-child(2),
-.productTable td:nth-child(2){
-  width:170px;
-}
-
-.productTable th:nth-child(3),
-.productTable td:nth-child(3){
-  width:420px;
-}
-
-.productTable th:nth-child(n+4),
-.productTable td:nth-child(n+4){
-  width:120px;
-}
-
-/* FREEZE */
-
-.productTable th.stickyImg,
-.productTable td.stickyImg{
-  position:sticky;
-  left:0;
-  z-index:10;
-  background:#fff !important;
-}
-
-.productTable th.stickyImg{
-  background:#000 !important;
-  color:#fff !important;
-}
-
-.productTable th.stickyModel,
-.productTable td.stickyModel{
-  position:sticky;
-  left:96px;
-  z-index:9;
-  background:#fff !important;
-}
-
-.productTable th.stickyModel{
-  background:#000 !important;
-  color:#fff !important;
-}
-
-/* IMAGEN */
-
-.productImg{
-  width:76px;
-  height:76px;
-  object-fit:contain;
-  border-radius:12px;
-  border:1px solid #e7e7e7;
-  cursor:pointer;
-  background:#fff;
-}
-
-.productPlaceholder{
-  width:76px;
-  height:76px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:1px dashed #ddd;
-  border-radius:12px;
-  color:#999;
-  font-size:10px;
-}
-
-/* LIGHTBOX */
-
-#lightbox{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.88);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:99999;
-}
-
-#lightbox img{
-  max-width:90vw;
-  max-height:90vh;
-  transition:transform .12s linear;
-  cursor:zoom-in;
-  background:#fff;
-}
-
-#lightboxHelp{
-  position:fixed;
-  bottom:18px;
-  left:50%;
-  transform:translateX(-50%);
-  color:#fff;
-  font-size:12px;
-  opacity:.75;
-}
-
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito Sans",Arial,sans-serif}
+.wrap{max-width:1500px;margin:0 auto;padding:30px 26px 56px}
+.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}
+.logo{font-weight:800;font-size:28px;letter-spacing:.22em}
+.sub{margin-top:5px;color:var(--muted);font-size:13px}
+.status{color:var(--muted);font-size:12px;text-align:right}
+.tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:14px}
+.tabBtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 18px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.tabBtn.active{background:#000;color:#fff;border-color:#000}
+.tabPanel{display:none}.tabPanel.active{display:block}
+.filters,.productFilters{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 14px;margin-bottom:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;position:relative;z-index:20}
+.filter{position:relative}
+.filter button{width:100%;height:36px;border:1px solid var(--line);background:#fff;border-radius:12px;text-align:left;padding:0 34px 0 12px;font-size:12px;color:#222;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.filter button:after{content:'⌄';position:absolute;right:14px;color:#777}
+.menu{display:none;position:absolute;top:43px;left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.12);max-height:250px;overflow:auto;padding:8px;z-index:100}
+.filter.open .menu{display:block}
+.search{width:100%;border:1px solid var(--line);border-radius:10px;padding:7px 8px;font-size:11px;margin-bottom:6px}
+.opt{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:9px;font-size:11px;cursor:pointer}
+.opt:hover{background:#f7f7f7}
+.actions{grid-column:1/-1}
+.smallBtn{border:1px solid #111;background:#111;color:#fff;border-radius:999px;padding:8px 12px;font-size:11px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
+.chip{background:#000;color:#fff;border-radius:999px;padding:6px 10px;font-size:11px;display:flex;align-items:center;gap:7px}
+.chip button{width:17px;height:17px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;cursor:pointer}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
+.kpi .value{font-size:25px;font-weight:650;margin-top:10px}
+.kpi .note{font-size:12px;color:var(--muted);margin-top:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;min-height:350px}
+.card.full{grid-column:1/-1}
+.card h3{margin:0 0 14px;font-size:16px;font-weight:650}
+.chartBox{height:310px;position:relative;background:#fff}
+.productsHead{margin:2px 0 10px}
+.productSearchBox{max-width:560px;position:relative}
+.productSearchBox:before{content:'⌕';position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#777}
+#productSearch{width:100%;height:40px;border:1px solid var(--line);border-radius:999px;padding:0 16px 0 36px;font-size:13px;outline:none}
+.productStatus{margin-top:8px;color:var(--muted);font-size:12px}
+.productKpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.productKpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:none}
+.productKpi span{display:block;font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.1em}
+.productKpi strong{display:block;margin-top:7px;font-size:18px;font-weight:700}
+.st-badge{margin-top:6px;display:inline-block;padding:4px 8px;border-radius:10px;font-size:10px;font-weight:600;background:#f5f5f5;color:#333}
+.st-badge.bueno{background:#e6f4ea;color:#1b7f3a}.st-badge.medio{background:#f2f2f2;color:#666}.st-badge.bajo{background:#fdecea;color:#c62828}
+.productTableWrap{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);width:100%;max-height:780px;overflow:auto;position:relative}
+.productTable{width:max-content;min-width:2100px;border-collapse:separate;border-spacing:0;table-layout:fixed;background:#fff}
+.productTable th,.productTable td{border-bottom:1px solid #eee;border-right:1px solid #f2f2f2;padding:12px 10px;font-size:12px;line-height:1.25;vertical-align:middle;background:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:none!important;transform:none!important;animation:none!important;box-shadow:none!important}
+.productTable th{position:sticky;top:0;z-index:5;background:#000;color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.045em;text-align:center;height:64px;white-space:normal}
+.productTable tr:hover td,.productTable td:hover,.productTable th:hover{background:inherit!important;transform:none!important;box-shadow:none!important}
+.productTable th:hover{background:#000!important;color:#fff!important}
+.productTable th.sortable{cursor:pointer}
+.sortHead{display:flex;align-items:center;justify-content:center;gap:5px;position:relative}
+.sortIcon{width:15px;height:15px;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:8px;flex:0 0 auto}
+.productTable th.sorted .sortIcon{background:#fff;color:#000}
+.productTable th:nth-child(1),.productTable td:nth-child(1){width:96px;text-align:center}
+.productTable th:nth-child(2),.productTable td:nth-child(2){width:165px}
+.productTable th:nth-child(3),.productTable td:nth-child(3){width:390px}
+.productTable th:nth-child(4),.productTable td:nth-child(4){width:115px}
+.productTable th:nth-child(5),.productTable td:nth-child(5){width:115px}
+.productTable th:nth-child(6),.productTable td:nth-child(6){width:310px}
+.productTable th:nth-child(n+7),.productTable td:nth-child(n+7){width:105px;text-align:center}
+.productTable th.stickyImg,.productTable td.stickyImg{position:sticky!important;left:0!important;z-index:8!important;background:#fff!important;transition:none!important;transform:none!important;box-shadow:none!important}
+.productTable th.stickyImg{background:#000!important;color:#fff!important;z-index:12!important}
+.productTable th.stickyModel,.productTable td.stickyModel{position:sticky!important;left:96px!important;z-index:7!important;background:#fff!important;transition:none!important;transform:none!important;box-shadow:none!important}
+.productTable th.stickyModel{background:#000!important;color:#fff!important;z-index:11!important}
+.productImg{width:76px;height:76px;object-fit:contain;border-radius:12px;border:1px solid #e7e7e7;cursor:pointer;background:#fff}
+.productPlaceholder{width:76px;height:76px;display:flex;align-items:center;justify-content:center;border:1px dashed #d7d7d7;border-radius:12px;color:#999;font-size:10px}
+.tipoCell{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.86);display:none;align-items:center;justify-content:center;z-index:99999}
+#lightbox img{max-width:90vw;max-height:90vh;transition:transform .12s linear;cursor:zoom-in;background:#fff}
+#lightboxHelp{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);color:#fff;font-size:12px;opacity:.75}
+@media(max-width:1100px){.kpis,.productKpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.top{flex-direction:column}.status{text-align:left}}
+@media(max-width:640px){.wrap{padding:20px 14px}.kpis,.productKpis{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
-
 <div class="wrap">
-
-<div class="logo">
-PERRY ELLIS
+  <div class="top">
+    <div><div class="logo">PERRY ELLIS</div><div class="sub">Dashboard ejecutivo de ventas · México · Google Sheets</div></div>
+    <div id="globalStatus" class="status">Cargando datos...</div>
+  </div>
+  <div class="tabs"><button class="tabBtn active" data-tab="ventasTab">Ventas</button><button class="tabBtn" data-tab="productosTab">Productos</button></div>
+  <div id="ventasTab" class="tabPanel active">
+    <div class="filters" id="filters">
+      <div class="filter" data-key="anio"><button>Año</button><div class="menu"></div></div><div class="filter" data-key="mesNombre"><button>Mes</button><div class="menu"></div></div><div class="filter" data-key="estado"><button>Estado</button><div class="menu"></div></div><div class="filter" data-key="canal"><button>Canal</button><div class="menu"></div></div>
+      <div class="actions"><button class="smallBtn" id="clearSales">Limpiar filtros</button></div>
+    </div>
+    <div id="activeSalesFilters" class="chips"></div>
+    <div class="kpis">
+      <div class="kpi"><div class="label">Venta total</div><div class="value" id="kpiVenta">$0</div><div class="note">Ingresos filtrados</div></div><div class="kpi"><div class="label">Pares/Piezas vendidos</div><div class="value" id="kpiPares">0</div><div class="note">Unidades totales</div></div><div class="kpi"><div class="label">Ticket promedio</div><div class="value" id="kpiTicket">$0</div><div class="note">Venta / registros</div></div><div class="kpi"><div class="label">Modelos vendidos</div><div class="value" id="kpiModelos">0</div><div class="note">Modelos únicos</div></div>
+    </div>
+    <div class="grid">
+      <div class="card full"><h3>Total ventas por mes</h3><div class="chartBox"><canvas id="ventasMesTotal"></canvas></div></div><div class="card full"><h3>Total ventas por canal</h3><div class="chartBox"><canvas id="ventasCanalAnio"></canvas></div></div><div class="card full"><h3>Total de ventas por año</h3><div class="chartBox"><canvas id="ventasAnio"></canvas></div></div><div class="card"><h3>Ventas por mes</h3><div class="chartBox"><canvas id="ventasMes"></canvas></div></div><div class="card"><h3>Ventas por canal</h3><div class="chartBox"><canvas id="ventasCanal"></canvas></div></div><div class="card"><h3>Venta por estilo</h3><div class="chartBox"><canvas id="ventasEstilo"></canvas></div></div><div class="card"><h3>Venta por categoría</h3><div class="chartBox"><canvas id="ventasCategoria"></canvas></div></div><div class="card full"><h3>Top estados</h3><div class="chartBox"><canvas id="ventasEstado"></canvas></div></div><div class="card full"><h3>Venta por proveedor</h3><div class="chartBox"><canvas id="ventasProveedor"></canvas></div></div>
+    </div>
+  </div>
+  <div id="productosTab" class="tabPanel">
+    <div class="productsHead"><div class="productSearchBox"><input id="productSearch" placeholder="Buscar por modelo, descripción, categoría, proveedor o estilo..." autocomplete="off"></div><div id="productsStatus" class="productStatus">Cargando productos...</div></div>
+    <div class="productFilters" id="productFilters">
+      <div class="filter" data-pkey="categoria"><button>Categoría</button><div class="menu"></div></div><div class="filter" data-pkey="estilo"><button>Estilo</button><div class="menu"></div></div><div class="filter" data-pkey="proveedor"><button>Proveedor</button><div class="menu"></div></div><div class="filter" data-pkey="tipo"><button>Tipo</button><div class="menu"></div></div><div class="filter" data-pkey="mesesPubRange"><button>Meses publicación</button><div class="menu"></div></div><div class="filter" data-pkey="sellRange"><button>Sell Through</button><div class="menu"></div></div><div class="filter" data-pkey="pzasCompradasRange"><button>Piezas compradas</button><div class="menu"></div></div><div class="filter" data-pkey="pzasVendidasRange"><button>Piezas vendidas</button><div class="menu"></div></div><div class="filter" data-pkey="invPzsRange"><button>Inventario piezas</button><div class="menu"></div></div>
+      <div class="actions"><button class="smallBtn" id="clearProducts">Limpiar filtros de productos</button></div>
+    </div>
+    <div id="activeProductFilters" class="chips"></div>
+    <div class="productKpis" id="productKpis"></div>
+    <div class="productTableWrap"><table class="productTable" id="productTable"><thead></thead><tbody><tr><td style="padding:24px;color:#777">Cargando productos...</td></tr></tbody></table></div>
+  </div>
 </div>
-
-<div class="tabs">
-<button class="tabBtn active">Productos</button>
-</div>
-
-<div class="kpis">
-
-<div class="kpi">
-<span>$ Vendido</span>
-<strong id="kpiVendido">$0</strong>
-</div>
-
-<div class="kpi">
-<span>Pzas Vendidas</span>
-<strong id="kpiVendidas">0</strong>
-</div>
-
-<div class="kpi">
-<span>Sell Through</span>
-<strong id="kpiSell">0%</strong>
-</div>
-
-<div class="kpi">
-<span>$ Inventario</span>
-<strong id="kpiInv">$0</strong>
-</div>
-
-</div>
-
-<div class="productTableWrap">
-
-<table class="productTable">
-
-<thead>
-
-<tr>
-
-<th class="stickyImg">
-Imagen
-</th>
-
-<th class="stickyModel">
-Modelo
-</th>
-
-<th>
-Descripción
-</th>
-
-<th>
-Categoría
-</th>
-
-<th>
-Proveedor
-</th>
-
-<th>
-Precio Venta
-</th>
-
-<th>
-Pzas Compradas
-</th>
-
-<th>
-$ Comprado
-</th>
-
-<th>
-Pzas Vendidas
-</th>
-
-<th>
-$ Vendido
-</th>
-
-<th>
-Sell Through
-</th>
-
-<th>
-Inventario
-</th>
-
-<th>
-$ Inventario
-</th>
-
-<th>
-Meses Publicación
-</th>
-
-<th>
-Tipo
-</th>
-
-</tr>
-
-</thead>
-
-<tbody id="productBody">
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-<div id="lightbox">
-
-<img id="lightboxImg">
-
-<div id="lightboxHelp">
-Scroll para zoom · doble clic para reset · Esc para cerrar
-</div>
-
-</div>
-
+<div id="lightbox"><img id="lightboxImg"><div id="lightboxHelp">Scroll para zoom · doble clic para reset · Esc para cerrar</div></div>
 <script>
-
-const PRODUCTOS_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrkp1ihwlvN7EZTRlbc5iBg_jouqROmirYiZVjxwTfCyM_qxemYdJyznMVCUUH9Q/pub?gid=189275553&single=true&output=csv";
-
-function parseCSV(text){
-
-  const rows = [];
-  let row = [];
-  let value = "";
-  let inside = false;
-
-  for(let i=0;i<text.length;i++){
-
-    const c = text[i];
-    const n = text[i+1];
-
-    if(c === '"' && inside && n === '"'){
-      value += '"';
-      i++;
-      continue;
-    }
-
-    if(c === '"'){
-      inside = !inside;
-      continue;
-    }
-
-    if(c === "," && !inside){
-      row.push(value);
-      value = "";
-      continue;
-    }
-
-    if((c === "\n" || c === "\r") && !inside){
-
-      if(c === "\r" && n === "\n"){
-        i++;
-      }
-
-      row.push(value);
-      rows.push(row);
-
-      row = [];
-      value = "";
-
-      continue;
-    }
-
-    value += c;
-  }
-
-  if(value !== "" || row.length){
-    row.push(value);
-    rows.push(row);
-  }
-
-  const headers = rows.shift();
-
-  return rows.map(r => {
-
-    let obj = {};
-
-    headers.forEach((h,i)=>{
-      obj[h.trim()] = (r[i] || "").trim();
-    });
-
-    return obj;
-  });
-}
-
-function money(n){
-
-  return new Intl.NumberFormat(
-    'es-MX',
-    {
-      style:'currency',
-      currency:'MXN',
-      maximumFractionDigits:0
-    }
-  ).format(Number(n)||0);
-}
-
-function num(n){
-
-  return new Intl.NumberFormat('es-MX')
-  .format(Number(n)||0);
-}
-
-function parseNum(v){
-
-  if(!v) return 0;
-
-  return Number(
-    String(v)
-    .replace(/\$/g,'')
-    .replace(/,/g,'')
-  ) || 0;
-}
-
-async function loadProducts(){
-
-  const text = await fetch(PRODUCTOS_URL)
-  .then(r => r.text());
-
-  const data = parseCSV(text);
-
-  let html = "";
-
-  let vendido = 0;
-  let compradas = 0;
-  let vendidas = 0;
-  let inventario = 0;
-
-  data.forEach(r=>{
-
-    const img = r["Imagen"] || "";
-
-    const vendidoRow =
-    parseNum(r["$ Vendido"]);
-
-    const compradasRow =
-    parseNum(r["Pzas Compradas"]);
-
-    const vendidasRow =
-    parseNum(r["Pzas Vendidas"]);
-
-    const inventarioRow =
-    parseNum(r["$ Inventario"]);
-
-    vendido += vendidoRow;
-    compradas += compradasRow;
-    vendidas += vendidasRow;
-    inventario += inventarioRow;
-
-    html += `
-
-    <tr>
-
-      <td class="stickyImg">
-
-        ${
-          img
-
-          ?
-
-          `<img
-            src="${img}"
-            class="productImg"
-            loading="lazy"
-            onerror="this.outerHTML='<div class=&quot;productPlaceholder&quot;>PE</div>'"
-          >`
-
-          :
-
-          `<div class="productPlaceholder">PE</div>`
-        }
-
-      </td>
-
-      <td class="stickyModel">
-        ${r["Modelo"] || ""}
-      </td>
-
-      <td>
-        ${r["Descripción"] || ""}
-      </td>
-
-      <td>
-        ${r["Categoría"] || ""}
-      </td>
-
-      <td>
-        ${r["Proveedor"] || ""}
-      </td>
-
-      <td>
-        ${money(r["Precio Venta"] || 0)}
-      </td>
-
-      <td>
-        ${num(r["Pzas Compradas"] || 0)}
-      </td>
-
-      <td>
-        ${money(r["$ Comprado"] || 0)}
-      </td>
-
-      <td>
-        ${num(r["Pzas Vendidas"] || 0)}
-      </td>
-
-      <td>
-        ${money(r["$ Vendido"] || 0)}
-      </td>
-
-      <td>
-        ${r["Sell Through"] || ""}
-      </td>
-
-      <td>
-        ${num(r["Inventario"] || 0)}
-      </td>
-
-      <td>
-        ${money(r["$ Inventario"] || 0)}
-      </td>
-
-      <td>
-        ${r["Meses Publicación"] || ""}
-      </td>
-
-      <td>
-        ${r["Tipo"] || ""}
-      </td>
-
-    </tr>
-
-    `;
-  });
-
-  document.getElementById("productBody")
-  .innerHTML = html;
-
-  document.getElementById("kpiVendido")
-  .textContent = money(vendido);
-
-  document.getElementById("kpiVendidas")
-  .textContent = num(vendidas);
-
-  document.getElementById("kpiSell")
-  .textContent =
-  ((vendidas/compradas)*100).toFixed(1)+"%";
-
-  document.getElementById("kpiInv")
-  .textContent = money(inventario);
-}
-
-loadProducts();
-
-/* LIGHTBOX + ZOOM */
-
-const lightbox =
-document.getElementById("lightbox");
-
-const lightboxImg =
-document.getElementById("lightboxImg");
-
-let zoom = 1;
-
-document.addEventListener("click", e => {
-
-  if(e.target.classList.contains("productImg")){
-
-    lightbox.style.display = "flex";
-
-    lightboxImg.src = e.target.src;
-
-    zoom = 1;
-
-    lightboxImg.style.transform = "scale(1)";
-  }
-
-  if(e.target.id === "lightbox"){
-
-    lightbox.style.display = "none";
-  }
-});
-
-lightboxImg.addEventListener("wheel", e => {
-
-  e.preventDefault();
-
-  if(e.deltaY < 0){
-    zoom += .12;
-  }else{
-    zoom -= .12;
-  }
-
-  zoom = Math.min(
-    Math.max(1, zoom),
-    5
-  );
-
-  lightboxImg.style.transform =
-  `scale(${zoom})`;
-});
-
-lightboxImg.addEventListener("dblclick", ()=>{
-
-  zoom = 1;
-
-  lightboxImg.style.transform =
-  "scale(1)";
-});
-
-document.addEventListener("keydown", e => {
-
-  if(e.key === "Escape"){
-
-    lightbox.style.display = "none";
-  }
-});
-
+const VENTAS_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSrkp1ihwlvN7EZTRlbc5iBg_jouqROmirYiZVjxwTfCyM_qxemYdJyznMVCUUH9Q/pub?gid=778855662&single=true&output=csv";
+const PRODUCTOS_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSrkp1ihwlvN7EZTRlbc5iBg_jouqROmirYiZVjxwTfCyM_qxemYdJyznMVCUUH9Q/pub?gid=189275553&single=true&output=csv";
+const M=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const state={raw:[],productos:[],filters:{anio:new Set(),mesNombre:new Set(),estado:new Set(),canal:new Set()},pfilters:{categoria:new Set(),estilo:new Set(),proveedor:new Set(),tipo:new Set(),mesesPubRange:new Set(),sellRange:new Set(),pzasCompradasRange:new Set(),pzasVendidasRange:new Set(),invPzsRange:new Set()},charts:{},productSort:{key:null,dir:'desc'}};
+function norm(s){return String(s??'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ')}function money(n){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(Number(n)||0)}function compactMoney(n){n=Number(n)||0;if(Math.abs(n)>=1000000)return '$'+(n/1000000).toFixed(n>=10000000?0:1)+'M';if(Math.abs(n)>=1000)return '$'+Math.round(n/1000)+'K';return money(n)}function num(n){return new Intl.NumberFormat('es-MX').format(Number(n)||0)}function pct(n){return ((Number(n)||0)*100).toFixed(1)+'%'}function get(row,names){const keys=Object.keys(row);for(const name of names){const k=keys.find(x=>norm(x)===norm(name));if(k!==undefined)return row[k]}return undefined}
+function parseNum(v){if(v==null||v==='')return 0;if(typeof v==='number')return v;let s=String(v).replace(/"/g,'').trim().replace(/\s/g,'').replace(/\$/g,'').replace(/%/g,'');if(/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)){s=s.replace(/\./g,'').replace(',','.')}else if(/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)){s=s.replace(/,/g,'')}else if(/^\d+,\d+$/.test(s)){s=s.replace(',','.')}else{s=s.replace(/,/g,'')}const n=Number(s);return isNaN(n)?0:n}
+function parseCSV(text){const rows=[];let row=[],val='',q=false;for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&q&&n==='"'){val+='"';i++;continue}if(c==='"'){q=!q;continue}if(c===','&&!q){row.push(val);val='';continue}if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&n==='\n')i++;row.push(val);rows.push(row);row=[];val='';continue}val+=c}if(val!==''||row.length){row.push(val);rows.push(row)}const headers=(rows.shift()||[]).map(h=>h.trim());return rows.filter(r=>r.some(x=>String(x).trim()!=='')).map(r=>{const obj={};headers.forEach((h,i)=>obj[h]=(r[i]||'').trim());return obj})}
+function parseYear(v){let n=parseNum(v);if(n>=2020&&n<=2030)return Math.round(n);const s=String(v||'');const m=s.match(/20\d{2}/);return m?Number(m[0]):null}
+function parseMonth(v){if(v==null||v==='')return null;const s=norm(v);const names={enero:1,ene:1,febrero:2,feb:2,marzo:3,mar:3,abril:4,abr:4,mayo:5,may:5,junio:6,jun:6,julio:7,jul:7,agosto:8,ago:8,septiembre:9,setiembre:9,sep:9,octubre:10,oct:10,noviembre:11,nov:11,diciembre:12,dic:12};if(names[s])return names[s];const n=parseNum(v);if(n>=1&&n<=12)return Math.round(n);return null}
+function parseFecha(row){const anio=parseYear(get(row,['Año','Anio','Year']));const mes=parseMonth(get(row,['Mes','mes']));if(anio&&mes)return new Date(anio,mes-1,1);const raw=get(row,['Fecha','fecha','FECHA']);if(!raw)return null;const s=String(raw).trim();let p=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);if(p){let d=Number(p[1]),m=Number(p[2]),y=Number(p[3]);if(y<100)y+=2000;return new Date(y,m-1,d)}p=s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);if(p)return new Date(Number(p[1]),Number(p[2])-1,Number(p[3]));const clean=norm(s);const meses={enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,agosto:7,septiembre:8,setiembre:8,octubre:9,noviembre:10,diciembre:11};p=clean.match(/(\d{1,2})\s+([a-z]+)\s+(20\d{2})/);if(p&&meses[p[2]]!==undefined)return new Date(Number(p[3]),meses[p[2]],Number(p[1]));const n=parseNum(s);if(n>25000&&n<60000){const d=new Date((n-25569)*86400*1000);return isNaN(d)?null:d}const d=new Date(s);return isNaN(d)?null:d}
+function cleanChannel(v){const n=norm(v);if(n.includes('mercado'))return 'MERCADO LIBRE';if(n.includes('amazon'))return 'AMAZON';if(n.includes('liverpool'))return 'LIVERPOOL';if(n.includes('perry'))return 'PERRY ELLIS';return String(v||'Sin información').trim().toUpperCase()}
+function mapVentas(rows){const arr=[];rows.forEach(r=>{const fecha=parseFecha(r);if(!fecha)return;const anio=fecha.getFullYear();if(anio!==2025&&anio!==2026)return;const mesNum=fecha.getMonth()+1;arr.push({fecha,anio,mesNum,mesNombre:M[mesNum-1],estado:String(get(r,['Estado'])||'Sin información').trim()||'Sin información',canal:cleanChannel(get(r,['Canal'])),categoria:String(get(r,['Categoría','Categoria'])||'Sin información').trim()||'Sin información',estilo:String(get(r,['Estilo','Style','Modelo'])||'Sin información').trim()||'Sin información',proveedor:String(get(r,['Proveedor','Vendor','Supplier'])||'Sin información').trim()||'Sin información',modelo:String(get(r,['Modelo'])||'Sin información').trim()||'Sin información',venta:parseNum(get(r,['Total de Venta','Total Venta','Venta','Ventas','Importe','Total'])),pares:parseNum(get(r,['Pares','Piezas','Unidades','Cantidad']))})});return arr}
+function rangeLabel(type,v){const n=parseNum(v);if(type==='mesesPubRange'){if(n<=3)return'0 - 3 meses';if(n<=6)return'4 - 6 meses';if(n<=12)return'7 - 12 meses';return'13+ meses'}if(type==='sellRange'){if(n>=70||(n>0&&n<=1&&n>=0.7))return'Bueno (70%+)';if(n>=40||(n>0&&n<=1&&n>=0.4))return'Medio (40% - 69%)';return'Bajo (0% - 39%)'}if(n<=50)return'1 - 50';if(n<=100)return'51 - 100';if(n<=250)return'101 - 250';if(n<=500)return'251 - 500';return'501+'}
+function mapProductos(rows){return rows.map(r=>{const pzasCompradas=parseNum(get(r,['Pzas Compradas','Piezas Compradas','Piezas compradas']));const pzasVendidas=parseNum(get(r,['Pzas Vendidas','Piezas Vendidas','Piezas vendidas']));const comprado=parseNum(get(r,['$ Comprado','$ comprado','Comprado','Costo comprado']));const vendido=parseNum(get(r,['$ Vendido','$ vendido','Vendido','Venta vendida']));const invPzs=parseNum(get(r,['Inventario Piezas','Inventario piezas','Inv Pzs','Inventario']));const precioVenta=parseNum(get(r,['Precio Venta','Precio de Venta','Precio venta']));const mesesPub=Math.round(parseNum(get(r,['Meses de Publicación','Meses Publicación','Meses publicacion','Meses Pub'])));const sell=pzasCompradas?pzasVendidas/pzasCompradas:0;const costoProm=pzasCompradas?comprado/pzasCompradas:0;return{imagen:String(get(r,['Imagen','Image','Image Src'])||'').trim(),modelo:String(get(r,['Modelo'])||'').trim(),descripcion:String(get(r,['Descripción','Descripcion','Description'])||'').trim(),categoria:String(get(r,['Categoría','Categoria'])||'Sin información').trim()||'Sin información',estilo:String(get(r,['Estilo','Style'])||'Sin información').trim()||'Sin información',proveedor:String(get(r,['Proveedor','Vendor','Supplier'])||'Sin información').trim()||'Sin información',precioVenta,pzasCompradas,comprado,pzasVendidas,vendido,invPzs,invDinero:invPzs*costoProm,mesesPub,sell,tipo:String(get(r,['Tipo','Type'])||'').trim(),mesesPubRange:rangeLabel('mesesPubRange',mesesPub),sellRange:rangeLabel('sellRange',sell),pzasCompradasRange:rangeLabel('pzasCompradasRange',pzasCompradas),pzasVendidasRange:rangeLabel('pzasVendidasRange',pzasVendidas),invPzsRange:rangeLabel('invPzsRange',invPzs)}})}
+function group(data,key,metric='venta'){const m=new Map();data.forEach(r=>m.set(r[key],(m.get(r[key])||0)+(Number(r[metric])||0)));return[...m.entries()].sort((a,b)=>b[1]-a[1])}
+function filteredVentas(){return state.raw.filter(r=>Object.entries(state.filters).every(([k,set])=>!set.size||set.has(String(r[k]))))}
+function filteredProducts(){const q=norm(document.getElementById('productSearch')?.value||'');return state.productos.filter(r=>{const ok=Object.entries(state.pfilters).every(([k,set])=>!set.size||set.has(String(r[k])));if(!ok)return false;if(!q)return true;return[r.modelo,r.descripcion,r.categoria,r.proveedor,r.estilo].some(x=>norm(x).includes(q))})}
+function makeOptions(vals,set){return vals.map(v=>`<label class="opt"><input type="checkbox" value="${String(v).replaceAll('"','&quot;')}" ${set.has(String(v))?'checked':''}>${v}</label>`).join('')||'<div class="opt" style="color:#777">Sin opciones</div>'}
+function buildFilterMenus(){buildSalesFilters();buildProductFilters()}
+function buildSalesFilters(){['anio','mesNombre','estado','canal'].forEach(key=>{const box=document.querySelector(`.filter[data-key="${key}"]`);if(!box)return;const menu=box.querySelector('.menu');let vals=[...new Set(state.raw.map(r=>r[key]).filter(v=>v&&v!=='Sin información'))];if(key==='mesNombre')vals.sort((a,b)=>M.indexOf(a)-M.indexOf(b));else vals.sort((a,b)=>String(a).localeCompare(String(b),'es'));menu.innerHTML=`<input class="search" placeholder="Buscar...">`+makeOptions(vals,state.filters[key]);menu.querySelector('.search').addEventListener('input',e=>{const q=norm(e.target.value);menu.querySelectorAll('.opt').forEach(o=>o.style.display=norm(o.textContent).includes(q)?'flex':'none')});menu.querySelectorAll('input[type=checkbox]').forEach(ch=>ch.addEventListener('change',e=>{const val=e.target.value;e.target.checked?state.filters[key].add(val):state.filters[key].delete(val);updateSalesButton(key);renderSales();renderSalesChips()}));updateSalesButton(key)})}
+function buildProductFilters(){['categoria','estilo','proveedor','tipo','mesesPubRange','sellRange','pzasCompradasRange','pzasVendidasRange','invPzsRange'].forEach(key=>{const box=document.querySelector(`.filter[data-pkey="${key}"]`);if(!box)return;const menu=box.querySelector('.menu');let vals=[...new Set(state.productos.map(r=>r[key]).filter(v=>v!==''&&v!=null&&v!=='Sin información'))];vals.sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}));menu.innerHTML=`<input class="search" placeholder="Buscar...">`+makeOptions(vals,state.pfilters[key]);menu.querySelector('.search').addEventListener('input',e=>{const q=norm(e.target.value);menu.querySelectorAll('.opt').forEach(o=>o.style.display=norm(o.textContent).includes(q)?'flex':'none')});menu.querySelectorAll('input[type=checkbox]').forEach(ch=>ch.addEventListener('change',e=>{const val=e.target.value;e.target.checked?state.pfilters[key].add(val):state.pfilters[key].delete(val);updateProductButton(key);renderProducts();renderProductChips()}));updateProductButton(key)})}
+function updateSalesButton(key){const b=document.querySelector(`.filter[data-key="${key}"] button`);const labels={anio:'Año',mesNombre:'Mes',estado:'Estado',canal:'Canal'};const s=state.filters[key];b.textContent=s.size?`${labels[key]}: ${s.size}`:labels[key]}
+function updateProductButton(key){const b=document.querySelector(`.filter[data-pkey="${key}"] button`);const labels={categoria:'Categoría',estilo:'Estilo',proveedor:'Proveedor',tipo:'Tipo',mesesPubRange:'Meses publicación',sellRange:'Sell Through',pzasCompradasRange:'Piezas compradas',pzasVendidasRange:'Piezas vendidas',invPzsRange:'Inventario piezas'};const s=state.pfilters[key];b.textContent=s.size?`${labels[key]}: ${s.size}`:labels[key]}
+function renderChips(containerId,filters,labels,onRemove){const c=document.getElementById(containerId);c.innerHTML='';Object.entries(filters).forEach(([k,set])=>set.forEach(v=>{const chip=document.createElement('div');chip.className='chip';chip.innerHTML=`<b>${labels[k]||k}:</b><span>${v}</span>`;const btn=document.createElement('button');btn.textContent='×';btn.addEventListener('click',()=>onRemove(k,v));chip.appendChild(btn);c.appendChild(chip)}))}
+function renderSalesChips(){renderChips('activeSalesFilters',state.filters,{anio:'Año',mesNombre:'Mes',estado:'Estado',canal:'Canal'},(k,v)=>{state.filters[k].delete(v);updateSalesButton(k);renderSales();renderSalesChips()})}
+function renderProductChips(){renderChips('activeProductFilters',state.pfilters,{categoria:'Categoría',estilo:'Estilo',proveedor:'Proveedor',tipo:'Tipo',mesesPubRange:'Meses',sellRange:'Sell',pzasCompradasRange:'Compradas',pzasVendidasRange:'Vendidas',invPzsRange:'Inventario'},(k,v)=>{state.pfilters[k].delete(v);updateProductButton(k);renderProducts();renderProductChips()})}
+function chart(id,type,labels,data,opts={}){if(state.charts[id])state.charts[id].destroy();const ctx=document.getElementById(id);state.charts[id]=new Chart(ctx,{type,data:{labels,datasets:[{data,label:opts.label||'Venta',backgroundColor:opts.bg||'#000',borderColor:'#000',borderWidth:type==='line'?2:0,tension:.35,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#000',titleColor:'#fff',bodyColor:'#fff',callbacks:{label:c=>money(c.raw)}}},scales:type==='doughnut'?{}:{y:{beginAtZero:true,ticks:{callback:v=>compactMoney(v)}},x:{ticks:{autoSkip:false,maxRotation:35,minRotation:0}}},...opts.options}})}
+function renderSales(){const data=filteredVentas();const venta=data.reduce((s,r)=>s+r.venta,0);const pares=data.reduce((s,r)=>s+r.pares,0);document.getElementById('kpiVenta').textContent=money(venta);document.getElementById('kpiPares').textContent=num(pares);document.getElementById('kpiTicket').textContent=money(data.length?venta/data.length:0);document.getElementById('kpiModelos').textContent=num(new Set(data.map(r=>r.modelo)).size);const byMonth=new Map();data.forEach(r=>{const k=`${r.anio}-${String(r.mesNum).padStart(2,'0')}`;byMonth.set(k,(byMonth.get(k)||0)+r.venta)});const months=[...byMonth.entries()].sort((a,b)=>a[0].localeCompare(b[0]));chart('ventasMesTotal','bar',months.map(x=>M[Number(x[0].slice(5))-1].slice(0,3)+' '+x[0].slice(2,4)),months.map(x=>x[1]));chart('ventasMes','bar',months.map(x=>M[Number(x[0].slice(5))-1].slice(0,3)+' '+x[0].slice(2,4)),months.map(x=>x[1]));const canalAnio=new Map();state.raw.forEach(r=>{const k=`${r.canal} ${r.anio}`;canalAnio.set(k,(canalAnio.get(k)||0)+r.venta)});const ca=[...canalAnio.entries()].sort((a,b)=>b[1]-a[1]);chart('ventasCanalAnio','bar',ca.map(x=>x[0]),ca.map(x=>x[1]));const years=group(data,'anio').sort((a,b)=>Number(a[0])-Number(b[0]));chart('ventasAnio','bar',years.map(x=>x[0]),years.map(x=>x[1]),{options:{indexAxis:'y'}});const canal=group(data,'canal').slice(0,8);chart('ventasCanal','doughnut',canal.map(x=>x[0]),canal.map(x=>x[1]));const estilo=group(data,'estilo');chart('ventasEstilo','bar',estilo.map(x=>x[0]),estilo.map(x=>x[1]));const cat=group(data,'categoria');chart('ventasCategoria','bar',cat.map(x=>x[0]),cat.map(x=>x[1]));const estado=group(data,'estado').slice(0,15);chart('ventasEstado','bar',estado.map(x=>x[0]),estado.map(x=>x[1]));const prov=group(data,'proveedor');chart('ventasProveedor','bar',prov.map(x=>x[0]),prov.map(x=>x[1]))}
+function stClass(sell){return sell>=0.7?'bueno':(sell>=0.4?'medio':'bajo')}function stLabel(sell){return sell>=0.7?'BUENO':(sell>=0.4?'MEDIO':'BAJO')}
+function renderProducts(){let data=filteredProducts();if(state.productSort.key){const k=state.productSort.key,dir=state.productSort.dir==='asc'?1:-1;data=[...data].sort((a,b)=>{const av=a[k],bv=b[k];if(typeof av==='number'||typeof bv==='number')return((Number(av)||0)-(Number(bv)||0))*dir;return String(av||'').localeCompare(String(bv||''),'es',{numeric:true})*dir})}const totalVendido=data.reduce((s,r)=>s+r.vendido,0);const totalComprado=data.reduce((s,r)=>s+r.comprado,0);const pzasVend=data.reduce((s,r)=>s+r.pzasVendidas,0);const pzasComp=data.reduce((s,r)=>s+r.pzasCompradas,0);const invPzs=data.reduce((s,r)=>s+r.invPzs,0);const invDinero=data.reduce((s,r)=>s+r.invDinero,0);const sell=pzasComp?pzasVend/pzasComp:0;document.getElementById('productKpis').innerHTML=`<div class="productKpi"><span>Productos filtrados</span><strong>${num(data.length)}</strong></div><div class="productKpi"><span>$ Vendido</span><strong>${money(totalVendido)}</strong></div><div class="productKpi"><span>Pzas. vendidas</span><strong>${num(pzasVend)}</strong></div><div class="productKpi"><span>Sell Through</span><strong>${pct(sell)}</strong></div><div class="productKpi"><span>$ Comprado</span><strong>${money(totalComprado)}</strong></div><div class="productKpi"><span>Pzas. compradas</span><strong>${num(pzasComp)}</strong></div><div class="productKpi"><span>Inventario piezas</span><strong>${num(invPzs)}</strong></div><div class="productKpi"><span>$ Inventario</span><strong>${money(invDinero)}</strong></div>`;document.getElementById('productsStatus').textContent=`${num(data.length)} productos visibles`;const cols=[['imagen','Imagen'],['modelo','Modelo'],['descripcion','Descripción'],['categoria','Categoría'],['estilo','Estilo'],['proveedor','Proveedor'],['precioVenta','Precio venta'],['pzasCompradas','Pzas compradas'],['comprado','$ comprado'],['pzasVendidas','Pzas vendidas'],['vendido','$ vendido'],['sell','Sell Through'],['invPzs','Inventario piezas'],['invDinero','$ inventario'],['mesesPub','Meses publicación'],['tipo','Tipo']];const thead=document.querySelector('#productTable thead');thead.innerHTML='<tr>'+cols.map((c,i)=>`<th class="sortable ${i===0?'stickyImg':''} ${i===1?'stickyModel':''}" data-sort="${c[0]}"><span class="sortHead"><span>${c[1]}</span><span class="sortIcon">↕</span></span></th>`).join('')+'</tr>';thead.querySelectorAll('th.sortable').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.sort;if(state.productSort.key===k)state.productSort.dir=state.productSort.dir==='asc'?'desc':'asc';else{state.productSort.key=k;state.productSort.dir='desc'}renderProducts()}));const tbody=document.querySelector('#productTable tbody');const totalRow=`<tr><td class="stickyImg"></td><td class="stickyModel"><b>Total filtrado</b></td><td></td><td></td><td></td><td></td><td></td><td>${num(pzasComp)}</td><td>${money(totalComprado)}</td><td>${num(pzasVend)}</td><td>${money(totalVendido)}</td><td>${pct(sell)}</td><td>${num(invPzs)}</td><td>${money(invDinero)}</td><td></td><td></td></tr>`;tbody.innerHTML=data.map(r=>{const img=r.imagen?`<img class="productImg" src="${r.imagen}" loading="lazy" onerror="this.outerHTML='<div class=&quot;productPlaceholder&quot;>PE</div>'">`:`<div class="productPlaceholder">PE</div>`;return`<tr><td class="stickyImg">${img}</td><td class="stickyModel">${r.modelo}</td><td>${r.descripcion}</td><td>${r.categoria}</td><td>${r.estilo}</td><td>${r.proveedor}</td><td>${money(r.precioVenta)}</td><td>${num(r.pzasCompradas)}</td><td>${money(r.comprado)}</td><td>${num(r.pzasVendidas)}</td><td>${money(r.vendido)}</td><td>${pct(r.sell)} <span class="st-badge ${stClass(r.sell)}">${stLabel(r.sell)}</span></td><td>${num(r.invPzs)}</td><td>${money(r.invDinero)}</td><td>${num(r.mesesPub)}</td><td class="tipoCell">${r.tipo}</td></tr>`}).join('')+totalRow}
+document.querySelectorAll('.tabBtn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tabBtn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tabPanel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(btn.dataset.tab).classList.add('active')}));
+document.addEventListener('click',e=>{const btn=e.target.closest('.filter button');if(btn){e.stopPropagation();const f=btn.closest('.filter');document.querySelectorAll('.filter').forEach(x=>{if(x!==f)x.classList.remove('open')});f.classList.toggle('open');return}if(!e.target.closest('.filter'))document.querySelectorAll('.filter').forEach(x=>x.classList.remove('open'))});
+document.getElementById('clearSales').addEventListener('click',()=>{Object.values(state.filters).forEach(s=>s.clear());buildSalesFilters();renderSales();renderSalesChips()});
+document.getElementById('clearProducts').addEventListener('click',()=>{Object.values(state.pfilters).forEach(s=>s.clear());buildProductFilters();renderProducts();renderProductChips()});
+document.getElementById('productSearch').addEventListener('input',()=>renderProducts());
+const lightbox=document.getElementById('lightbox'),lightboxImg=document.getElementById('lightboxImg');let zoom=1;document.addEventListener('click',e=>{if(e.target.classList.contains('productImg')){lightbox.style.display='flex';lightboxImg.src=e.target.src;zoom=1;lightboxImg.style.transform='scale(1)'}if(e.target.id==='lightbox')lightbox.style.display='none'});lightboxImg.addEventListener('wheel',e=>{e.preventDefault();zoom+=e.deltaY<0?.12:-.12;zoom=Math.min(Math.max(1,zoom),5);lightboxImg.style.transform=`scale(${zoom})`});lightboxImg.addEventListener('dblclick',()=>{zoom=1;lightboxImg.style.transform='scale(1)'});document.addEventListener('keydown',e=>{if(e.key==='Escape')lightbox.style.display='none'});
+async function loadAll(){try{const [ventasText,productosText]=await Promise.all([fetch(VENTAS_URL).then(r=>r.text()),fetch(PRODUCTOS_URL).then(r=>r.text())]);state.raw=mapVentas(parseCSV(ventasText));state.productos=mapProductos(parseCSV(productosText));buildFilterMenus();renderSales();renderSalesChips();renderProducts();renderProductChips();const years=[...new Set(state.raw.map(r=>r.anio))].sort().join(', ');document.getElementById('globalStatus').innerHTML=`Datos cargados · Ventas: <b>${num(state.raw.length)}</b> · Productos: <b>${num(state.productos.length)}</b> · Años: <b>${years}</b>`}catch(err){document.getElementById('globalStatus').textContent='Error al cargar datos desde Google Sheets';console.error(err)}}
+loadAll();
 </script>
-
 </body>
 </html>
