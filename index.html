@@ -1365,6 +1365,87 @@
   box-shadow:0 10px 24px rgba(0,0,0,.10);
 }
 
+
+
+/* V96 - Productos: columnas redimensionables + freeze Imagen/Modelo */
+#productosTab .productTableWrap{
+  overflow:auto !important;
+  max-width:100% !important;
+  position:relative !important;
+}
+#productosTab .productTable{
+  table-layout:fixed !important;
+  width:max-content !important;
+  min-width:2100px !important;
+}
+#productosTab .productTable th,
+#productosTab .productTable td{
+  position:relative;
+}
+#productosTab .productTable th:nth-child(1),
+#productosTab .productTable td:nth-child(1){
+  position:sticky !important;
+  left:0 !important;
+  width:var(--sticky-col-1,96px) !important;
+  min-width:var(--sticky-col-1,96px) !important;
+  max-width:var(--sticky-col-1,96px) !important;
+  z-index:8 !important;
+}
+#productosTab .productTable th:nth-child(2),
+#productosTab .productTable td:nth-child(2){
+  position:sticky !important;
+  left:var(--sticky-col-1,96px) !important;
+  width:var(--sticky-col-2,165px) !important;
+  min-width:var(--sticky-col-2,165px) !important;
+  max-width:var(--sticky-col-2,165px) !important;
+  z-index:7 !important;
+}
+#productosTab .productTable th:nth-child(1),
+#productosTab .productTable th:nth-child(2){
+  background:#000 !important;
+  color:#fff !important;
+  z-index:20 !important;
+}
+#productosTab .productTable td:nth-child(1),
+#productosTab .productTable td:nth-child(2){
+  background:#fff !important;
+}
+#productosTab .productTable td:nth-child(2){
+  box-shadow:10px 0 18px rgba(0,0,0,.045) !important;
+}
+#productosTab .productTable th:nth-child(2){
+  box-shadow:10px 0 18px rgba(0,0,0,.16) !important;
+}
+#productosTab .productTable .colResizeHandle{
+  position:absolute;
+  top:0;
+  right:0;
+  width:8px;
+  height:100%;
+  cursor:col-resize;
+  user-select:none;
+  z-index:40;
+}
+#productosTab .productTable .colResizeHandle::after{
+  content:'';
+  position:absolute;
+  top:18%;
+  bottom:18%;
+  right:2px;
+  width:1px;
+  background:rgba(255,255,255,.35);
+}
+#productosTab .productTable th:hover .colResizeHandle::after{
+  background:#fff;
+}
+#productosTab .productTable.resizing{
+  user-select:none;
+  cursor:col-resize;
+}
+#productosTab .productTable.resizing *{
+  cursor:col-resize !important;
+}
+
 </style>
 </head>
 <body>
@@ -2394,7 +2475,8 @@ function renderProductsTable(){
   renderProductTotalsFooter(table, baseFiltered, displayIdx, cols);
   const st=document.getElementById('productsStatus');
   if(st)st.textContent='';
-  renderProductChips()
+  renderProductChips();
+  setupProductTableEnhancements();
 }
 async function renderProductsFromWorkbook(wb,buf){try{const ws=wb.Sheets[wb.SheetNames[1]]; if(!ws){document.getElementById('productsStatus').textContent='No se encontró una segunda pestaña en el Excel.';return}const arr=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true}); const headerIndex=arr.findIndex(r=>r.some(v=>norm(v)==='imagen')&&r.some(v=>norm(v).startsWith('modelo'))); if(headerIndex<0){document.getElementById('productsStatus').textContent='No se detectó encabezado de productos en la pestaña 2.';return}const headers=ensureInventoryMoneyHeader(arr[headerIndex].map(v=>String(v||'').trim()).filter((v,i)=>v||i<12)); const imgByRow=await extractImagesFromSheet2(buf,wb); const rows=[]; for(let i=headerIndex+1;i<arr.length;i++){const excelRow=i+1; const values=arr[i].slice(0,headers.length); if(!values.some(v=>String(v||'').trim())&&!imgByRow[excelRow])continue; rows.push({values,image:imgByRow[excelRow]||'',search:productSearchText(values,headers)});} productRows=rows; productRows.headers=headers; productSort={index:null,dir:null}; Object.values(productFilterState).forEach(s=>s.clear()); refreshProductFilters(); renderProductsTable();}catch(err){document.getElementById('productsStatus').textContent='No se pudo renderizar la pestaña Productos: '+err.message;}}
 document.addEventListener('click',e=>{const btn=e.target.closest('.tabBtn'); if(!btn)return; document.querySelectorAll('.tabBtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.tabPanel').forEach(p=>p.classList.remove('active')); document.getElementById(btn.dataset.tab).classList.add('active');});
@@ -2590,6 +2672,70 @@ document.querySelectorAll('.filter button').forEach(b=>b.addEventListener('click
     }
   });
 })();
+
+
+
+/* V96 - Columnas redimensionables + freeze dinámico en Productos */
+function setupProductTableEnhancements(){
+  const table=document.getElementById('productTable');
+  if(!table || !table.querySelector('thead th')) return;
+
+  const ths=[...table.querySelectorAll('thead th')];
+  let colgroup=table.querySelector('colgroup.productColGroup');
+  if(!colgroup){
+    colgroup=document.createElement('colgroup');
+    colgroup.className='productColGroup';
+    table.insertBefore(colgroup, table.firstChild);
+  }
+  while(colgroup.children.length < ths.length) colgroup.appendChild(document.createElement('col'));
+  while(colgroup.children.length > ths.length) colgroup.removeChild(colgroup.lastChild);
+
+  const defaultWidths=[96,165,390,112,112,310,96,98,102,98,92,108,90,102,90,100,92,92,76];
+  ths.forEach((th,i)=>{
+    const col=colgroup.children[i];
+    const current=parseInt(col.style.width) || defaultWidths[i] || Math.max(90, Math.round(th.getBoundingClientRect().width));
+    col.style.width=current+'px';
+    if(!th.querySelector('.colResizeHandle')){
+      const handle=document.createElement('span');
+      handle.className='colResizeHandle';
+      handle.title='Arrastra para ajustar columna';
+      handle.addEventListener('click',e=>e.stopPropagation());
+      handle.addEventListener('mousedown',e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        const startX=e.clientX;
+        const startW=parseInt(col.style.width) || th.offsetWidth;
+        table.classList.add('resizing');
+        const onMove=ev=>{
+          const next=Math.max(64, startW + (ev.clientX-startX));
+          col.style.width=next+'px';
+          updateProductStickyOffsets();
+        };
+        const onUp=()=>{
+          table.classList.remove('resizing');
+          document.removeEventListener('mousemove',onMove);
+          document.removeEventListener('mouseup',onUp);
+          updateProductStickyOffsets();
+        };
+        document.addEventListener('mousemove',onMove);
+        document.addEventListener('mouseup',onUp);
+      });
+      th.appendChild(handle);
+    }
+  });
+  updateProductStickyOffsets();
+}
+
+function updateProductStickyOffsets(){
+  const table=document.getElementById('productTable');
+  if(!table) return;
+  const col1=table.querySelector('colgroup.productColGroup col:nth-child(1)');
+  const col2=table.querySelector('colgroup.productColGroup col:nth-child(2)');
+  const w1=parseInt(col1?.style.width)||96;
+  const w2=parseInt(col2?.style.width)||165;
+  table.style.setProperty('--sticky-col-1', w1+'px');
+  table.style.setProperty('--sticky-col-2', w2+'px');
+}
 
 </script>
 </body>
