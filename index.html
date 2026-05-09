@@ -1503,6 +1503,115 @@
 #productosTab .productImg { cursor: zoom-in !important; }
 #productosTab .colResizer { cursor: col-resize !important; }
 
+
+/* V100 - Freeze estable en Imagen y Modelo SIN movimiento, SIN resize */
+#productosTab .productTableWrap{
+  overflow:auto !important;
+  max-width:100% !important;
+  position:relative !important;
+}
+
+#productosTab .productTable{
+  table-layout:fixed !important;
+  width:max-content !important;
+  min-width:2100px !important;
+  border-collapse:separate !important;
+  border-spacing:0 !important;
+}
+
+/* Desactivar todo movimiento visual de tabla Productos */
+#productosTab .productTable,
+#productosTab .productTable *,
+#productosTab .productTableWrap,
+#productosTab .productTableWrap *{
+  transition:none !important;
+  animation:none !important;
+  transform:none !important;
+}
+
+/* Sin hover, sin sombras, sin cambio de color */
+#productosTab .productTable tbody tr:hover td,
+#productosTab .productTable tbody td:hover,
+#productosTab .productTable thead th:hover,
+#productosTab .productTable tr:hover,
+#productosTab .productTable td:hover,
+#productosTab .productTable th:hover{
+  box-shadow:none !important;
+  transform:none !important;
+  animation:none !important;
+}
+
+/* Encabezados permanecen negros */
+#productosTab .productTable thead th,
+#productosTab .productTable thead th:hover{
+  background:#000000 !important;
+  color:#ffffff !important;
+}
+
+/* Celdas permanecen blancas */
+#productosTab .productTable tbody td,
+#productosTab .productTable tbody tr:hover td,
+#productosTab .productTable tbody td:hover{
+  background:#ffffff !important;
+  color:#111111 !important;
+}
+
+/* Imagen congelada estable */
+#productosTab .productTable th:nth-child(1),
+#productosTab .productTable td:nth-child(1){
+  position:sticky !important;
+  left:0 !important;
+  width:110px !important;
+  min-width:110px !important;
+  max-width:110px !important;
+  z-index:30 !important;
+  box-shadow:none !important;
+}
+
+/* Modelo congelado estable */
+#productosTab .productTable th:nth-child(2),
+#productosTab .productTable td:nth-child(2){
+  position:sticky !important;
+  left:110px !important;
+  width:165px !important;
+  min-width:165px !important;
+  max-width:165px !important;
+  z-index:29 !important;
+  box-shadow:none !important;
+}
+
+/* Fondo correcto de columnas congeladas */
+#productosTab .productTable th:nth-child(1),
+#productosTab .productTable th:nth-child(2){
+  background:#000000 !important;
+  color:#ffffff !important;
+  z-index:40 !important;
+}
+
+#productosTab .productTable td:nth-child(1),
+#productosTab .productTable td:nth-child(2){
+  background:#ffffff !important;
+  color:#111111 !important;
+}
+
+/* Eliminar visualmente handles de resize si existen */
+#productosTab .productTable .colResizeHandle,
+#productosTab .productTable .colResizeHandle::after{
+  display:none !important;
+  width:0 !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+/* Imagen sin efecto hover */
+#productosTab .productImg,
+#productosTab .productImg:hover{
+  transform:none !important;
+  box-shadow:none !important;
+  transition:none !important;
+  cursor:zoom-in !important;
+}
+
 </style>
 </head>
 <body>
@@ -2732,66 +2841,28 @@ document.querySelectorAll('.filter button').forEach(b=>b.addEventListener('click
 
 
 
-/* V96 - Columnas redimensionables + freeze dinámico en Productos */
+
+/* V100 - Freeze estable sin resize dinámico */
 function setupProductTableEnhancements(){
   const table=document.getElementById('productTable');
-  if(!table || !table.querySelector('thead th')) return;
+  if(!table) return;
 
-  const ths=[...table.querySelectorAll('thead th')];
-  let colgroup=table.querySelector('colgroup.productColGroup');
-  if(!colgroup){
-    colgroup=document.createElement('colgroup');
-    colgroup.className='productColGroup';
-    table.insertBefore(colgroup, table.firstChild);
-  }
-  while(colgroup.children.length < ths.length) colgroup.appendChild(document.createElement('col'));
-  while(colgroup.children.length > ths.length) colgroup.removeChild(colgroup.lastChild);
+  /* Eliminar colgroup y handles creados por versiones anteriores */
+  const colgroup=table.querySelector('colgroup.productColGroup');
+  if(colgroup) colgroup.remove();
 
-  const defaultWidths=[96,165,390,112,112,310,96,98,102,98,92,108,90,102,90,100,92,92,76];
-  ths.forEach((th,i)=>{
-    const col=colgroup.children[i];
-    const current=parseInt(col.style.width) || defaultWidths[i] || Math.max(90, Math.round(th.getBoundingClientRect().width));
-    col.style.width=current+'px';
-    if(!th.querySelector('.colResizeHandle')){
-      const handle=document.createElement('span');
-      handle.className='colResizeHandle';
-      handle.title='Arrastra para ajustar columna';
-      handle.addEventListener('click',e=>e.stopPropagation());
-      handle.addEventListener('mousedown',e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        const startX=e.clientX;
-        const startW=parseInt(col.style.width) || th.offsetWidth;
-        table.classList.add('resizing');
-        const onMove=ev=>{
-          const next=Math.max(64, startW + (ev.clientX-startX));
-          col.style.width=next+'px';
-          updateProductStickyOffsets();
-        };
-        const onUp=()=>{
-          table.classList.remove('resizing');
-          document.removeEventListener('mousemove',onMove);
-          document.removeEventListener('mouseup',onUp);
-          updateProductStickyOffsets();
-        };
-        document.addEventListener('mousemove',onMove);
-        document.addEventListener('mouseup',onUp);
-      });
-      th.appendChild(handle);
-    }
-  });
-  updateProductStickyOffsets();
+  table.querySelectorAll('.colResizeHandle').forEach(el=>el.remove());
+  table.classList.remove('resizing');
+
+  table.style.setProperty('--sticky-col-1','110px');
+  table.style.setProperty('--sticky-col-2','165px');
 }
 
 function updateProductStickyOffsets(){
   const table=document.getElementById('productTable');
   if(!table) return;
-  const col1=table.querySelector('colgroup.productColGroup col:nth-child(1)');
-  const col2=table.querySelector('colgroup.productColGroup col:nth-child(2)');
-  const w1=parseInt(col1?.style.width)||96;
-  const w2=parseInt(col2?.style.width)||165;
-  table.style.setProperty('--sticky-col-1', w1+'px');
-  table.style.setProperty('--sticky-col-2', w2+'px');
+  table.style.setProperty('--sticky-col-1','110px');
+  table.style.setProperty('--sticky-col-2','165px');
 }
 
 </script>
