@@ -1612,6 +1612,36 @@
   cursor:zoom-in !important;
 }
 
+
+/* V101 - eliminar TODO movimiento hover en productos */
+#productosTab .productTable *,
+#productosTab .productTable *:hover,
+#productosTab .productTable *:focus,
+#productosTab .productTable *:active{
+  transition:none !important;
+  animation:none !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+#productosTab .productTable tbody tr:hover td,
+#productosTab .productTable tbody td:hover,
+#productosTab .productTable tbody tr:hover,
+#productosTab .productTable tbody td{
+  background:#fff !important;
+  filter:none !important;
+}
+
+#productosTab .productImg:hover{
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+#productosTab .productTable td:hover{
+  position:static !important;
+  z-index:auto !important;
+}
+
 </style>
 </head>
 <body>
