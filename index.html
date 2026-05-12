@@ -1660,6 +1660,150 @@
   transition:transform .18s ease !important;
 }
 
+
+/* V105 - Tabla Productos estable: freeze Imagen/Modelo sin movimiento ni parpadeo */
+#productosTab .productTableWrap{
+  overflow:auto !important;
+  max-height:780px !important;
+  position:relative !important;
+  scroll-behavior:auto !important;
+  overscroll-behavior:contain !important;
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+}
+
+/* Desactivar cualquier animación, hover o movimiento previo */
+#productosTab .productTable,
+#productosTab .productTable *,
+#productosTab .productTable *::before,
+#productosTab .productTable *::after{
+  transition:none !important;
+  animation:none !important;
+  transform:none !important;
+  filter:none !important;
+}
+
+/* Quitar resize/handles */
+#productosTab .colResizeHandle,
+#productosTab .colResizer,
+#productosTab [class*="Resize"],
+#productosTab [class*="resize"]{
+  display:none !important;
+  width:0 !important;
+  pointer-events:none !important;
+}
+
+/* Tabla estable */
+#productosTab .productTable{
+  border-collapse:separate !important;
+  border-spacing:0 !important;
+  table-layout:fixed !important;
+  width:max-content !important;
+  min-width:2100px !important;
+}
+
+/* Celdas estables */
+#productosTab .productTable th,
+#productosTab .productTable td{
+  position:relative !important;
+  background:#fff !important;
+  box-shadow:none !important;
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+
+/* Header fijo vertical */
+#productosTab .productTable thead th{
+  position:sticky !important;
+  top:0 !important;
+  background:#000 !important;
+  color:#fff !important;
+  z-index:50 !important;
+}
+
+/* Sin efectos al hover */
+#productosTab .productTable tr:hover,
+#productosTab .productTable tr:hover td,
+#productosTab .productTable td:hover,
+#productosTab .productTable th:hover{
+  background:#fff !important;
+  color:inherit !important;
+  box-shadow:none !important;
+  transform:none !important;
+  filter:none !important;
+  border-radius:0 !important;
+}
+
+/* Header permanece negro al hover */
+#productosTab .productTable thead th:hover{
+  background:#000 !important;
+  color:#fff !important;
+}
+
+/* Freeze SOLO Imagen */
+#productosTab .productTable th:nth-child(1),
+#productosTab .productTable td:nth-child(1){
+  position:sticky !important;
+  left:0 !important;
+  width:110px !important;
+  min-width:110px !important;
+  max-width:110px !important;
+  z-index:60 !important;
+  background:#fff !important;
+  box-shadow:none !important;
+}
+
+/* Freeze SOLO Modelo */
+#productosTab .productTable th:nth-child(2),
+#productosTab .productTable td:nth-child(2){
+  position:sticky !important;
+  left:110px !important;
+  width:165px !important;
+  min-width:165px !important;
+  max-width:165px !important;
+  z-index:59 !important;
+  background:#fff !important;
+  box-shadow:none !important;
+}
+
+/* Headers congelados sobre la tabla */
+#productosTab .productTable thead th:nth-child(1){
+  background:#000 !important;
+  color:#fff !important;
+  z-index:90 !important;
+}
+#productosTab .productTable thead th:nth-child(2){
+  background:#000 !important;
+  color:#fff !important;
+  z-index:89 !important;
+}
+
+/* Evitar que hover cambie el sticky */
+#productosTab .productTable td:nth-child(1):hover,
+#productosTab .productTable th:nth-child(1):hover{
+  position:sticky !important;
+  left:0 !important;
+}
+#productosTab .productTable td:nth-child(2):hover,
+#productosTab .productTable th:nth-child(2):hover{
+  position:sticky !important;
+  left:110px !important;
+}
+
+/* La imagen conserva clic/zoom pero sin animación */
+#productosTab .productImg,
+#productosTab .productImg:hover{
+  cursor:zoom-in !important;
+  transform:none !important;
+  box-shadow:none !important;
+  transition:none !important;
+}
+
 </style>
 </head>
 <body>
@@ -1725,7 +1869,7 @@
     <div class="filter" data-pkey="pzsCompradas"><button>Piezas compradas</button><div class="menu"></div></div>
     <div class="filter" data-pkey="pzsVendidas"><button>Piezas vendidas</button><div class="menu"></div></div>
     <div class="filter" data-pkey="invPzs"><button>Inventario piezas</button><div class="menu"></div></div>
-    <div class="actions"><button class="smallBtn dark" id="clearProductFilters">Limpiar filtros de productos</button></div>
+    <div class="actions"><button class="smallBtn dark" id="downloadProductsExcel">Descargar productos Excel</button><button class="smallBtn dark" id="clearProductFilters">Limpiar filtros de productos</button></div>
   </div>
   <div id="activeProductFilters" class="chips productChips"></div>
   <div id="productTotals" class="productTotals"></div>
@@ -2948,6 +3092,102 @@ function updateProductStickyOffsets(){
     if(target) obs.observe(target,{childList:true,subtree:true});
     cleanProductResize();
   });
+})();
+</script>
+
+
+<script>
+/* V105 - Estabilizar Productos y descargar Excel */
+(function(){
+  function stabilizeProductsTable(){
+    const table = document.querySelector('#productosTab .productTable');
+    if(!table) return;
+    table.classList.remove('resizing');
+    table.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(function(el){ el.remove(); });
+    table.style.setProperty('--sticky-col-1','110px');
+    table.style.setProperty('--sticky-col-2','165px');
+  }
+
+  function valueForExport(v){
+    if(v === undefined || v === null) return '';
+    return String(v).replace(/"/g,'""');
+  }
+
+  window.downloadProductsExcel = function(){
+    try{
+      let rows = [];
+      if(typeof filteredProducts === 'function'){
+        rows = filteredProducts();
+      }else if(window.state && Array.isArray(state.productos)){
+        rows = state.productos;
+      }
+
+      const headers = [
+        'Imagen','Modelo','Descripción','Categoría','Estilo','Proveedor',
+        'Precio Venta','Pzas Compradas','$ Comprado','Pzas Vendidas',
+        '$ Vendido','Sell Through','Inventario Piezas','$ Inventario',
+        'Meses Publicación','Tipo'
+      ];
+
+      const csvRows = [headers.map(function(h){return '"' + h + '"';}).join(',')];
+
+      rows.forEach(function(r){
+        const line = [
+          r.imagen || r.Imagen || '',
+          r.modelo || r.Modelo || '',
+          r.descripcion || r.Descripción || r.Descripcion || '',
+          r.categoria || r.Categoría || r.Categoria || '',
+          r.estilo || r.Estilo || '',
+          r.proveedor || r.Proveedor || '',
+          r.precioVenta ?? r['Precio Venta'] ?? '',
+          r.pzasCompradas ?? r['Pzas Compradas'] ?? '',
+          r.comprado ?? r['$ Comprado'] ?? '',
+          r.pzasVendidas ?? r['Pzas Vendidas'] ?? '',
+          r.vendido ?? r['$ Vendido'] ?? '',
+          r.sell !== undefined ? ((Number(r.sell)||0)*100).toFixed(1)+'%' : (r['Sell Through'] || ''),
+          r.invPzs ?? r['Inventario Piezas'] ?? r.Inventario ?? '',
+          r.invDinero ?? r['$ Inventario'] ?? '',
+          r.mesesPub ?? r['Meses Publicación'] ?? '',
+          r.tipo || r.Tipo || ''
+        ].map(function(v){ return '"' + valueForExport(v) + '"'; }).join(',');
+        csvRows.push(line);
+      });
+
+      const blob = new Blob(["\ufeff" + csvRows.join('\n')], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'productos_perry_ellis_filtrado.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }catch(e){
+      console.error('Error descargando productos:', e);
+      alert('No se pudo descargar el archivo de productos.');
+    }
+  };
+
+  function bindDownloadButton(){
+    const btn = document.getElementById('downloadProductsExcel');
+    if(btn && !btn.dataset.bound){
+      btn.dataset.bound = 'true';
+      btn.addEventListener('click', window.downloadProductsExcel);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    stabilizeProductsTable();
+    bindDownloadButton();
+  });
+  window.addEventListener('load', function(){
+    stabilizeProductsTable();
+    bindDownloadButton();
+  });
+  setInterval(function(){
+    stabilizeProductsTable();
+    bindDownloadButton();
+  }, 1000);
 })();
 </script>
 
