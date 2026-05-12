@@ -1504,320 +1504,35 @@
 #productosTab .colResizer { cursor: col-resize !important; }
 
 
-/* V104 FINAL - PRODUCTOS ESTÁTICO CON FREEZE REAL EN IMAGEN Y MODELO */
-/* 1) Eliminar cualquier movimiento, hover, escala, sombra o expansión heredada */
-#productosTab .productTableWrap,
-#productosTab .productTable,
-#productosTab .productTable *,
-#productosTab .productTable *::before,
-#productosTab .productTable *::after{
-  transition:none !important;
-  animation:none !important;
-  transform:none !important;
-  filter:none !important;
-  will-change:auto !important;
-}
+/* V107 FINAL - Productos sin movimiento/parpadeo, freeze solo Imagen y Modelo */
 
-/* 2) Quitar por completo resize/arrastre de columnas */
-#productosTab .colResizeHandle,
-#productosTab .colResizer,
-#productosTab [class*="Resize"],
-#productosTab [class*="resize"]{
-  display:none !important;
-  visibility:hidden !important;
-  opacity:0 !important;
-  pointer-events:none !important;
+/* Botones de Productos al lado derecho */
+#productosTab .productActions,
+#productosTab .productFilters .actions{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  gap:10px !important;
+  grid-column:1/-1 !important;
 }
-
-/* 3) Contenedor y tabla estables */
-#productosTab .productTableWrap{
-  overflow:auto !important;
-  scroll-behavior:auto !important;
-  overscroll-behavior:contain !important;
-  transform:none !important;
-}
-#productosTab .productTable{
-  table-layout:fixed !important;
-  border-collapse:separate !important;
-  border-spacing:0 !important;
-  width:max-content !important;
-  min-width:2200px !important;
-}
-
-/* 4) Celdas: nunca se expanden al hover */
-#productosTab .productTable th,
-#productosTab .productTable td,
-#productosTab .productTable th:hover,
-#productosTab .productTable td:hover,
-#productosTab .productTable tr:hover,
-#productosTab .productTable tr:hover td,
-#productosTab .productTable tbody tr:hover td,
-#productosTab .productTable td:nth-child(3):hover,
-#productosTab .productTable td:nth-child(4):hover,
-#productosTab .productTable td:nth-child(5):hover,
-#productosTab .productTable td:nth-child(6):hover{
-  position:relative !important;
-  background:#ffffff !important;
-  box-shadow:none !important;
-  border-radius:0 !important;
-  outline:none !important;
-  transform:none !important;
-  min-width:0 !important;
-  max-width:none !important;
-  white-space:nowrap !important;
-  overflow:hidden !important;
-  text-overflow:ellipsis !important;
-  cursor:default !important;
-}
-
-/* 5) Encabezado siempre negro y estable */
-#productosTab .productTable thead th,
-#productosTab .productTable thead th:hover{
-  position:sticky !important;
-  top:0 !important;
-  background:#000000 !important;
-  color:#ffffff !important;
-  z-index:100 !important;
-  box-shadow:none !important;
-}
-
-/* 6) FREEZE estable por clase, no por nth-child conflictivo */
-#productosTab .productTable .freezeImg{
-  position:sticky !important;
-  left:0 !important;
-  width:110px !important;
-  min-width:110px !important;
-  max-width:110px !important;
-  z-index:120 !important;
-  background:#ffffff !important;
-  box-shadow:none !important;
-}
-#productosTab .productTable thead .freezeImg{
-  background:#000000 !important;
-  color:#ffffff !important;
-  z-index:160 !important;
-}
-
-#productosTab .productTable .freezeModel{
-  position:sticky !important;
-  left:110px !important;
-  width:170px !important;
-  min-width:170px !important;
-  max-width:170px !important;
-  z-index:119 !important;
-  background:#ffffff !important;
-  box-shadow:none !important;
-}
-#productosTab .productTable thead .freezeModel{
-  background:#000000 !important;
-  color:#ffffff !important;
-  z-index:159 !important;
-}
-
-/* 7) Reafirmar freeze también al hover */
-#productosTab .productTable .freezeImg:hover{
-  position:sticky !important;
-  left:0 !important;
-  background:#ffffff !important;
-}
-#productosTab .productTable thead .freezeImg:hover{
-  background:#000000 !important;
-  color:#ffffff !important;
-}
-#productosTab .productTable .freezeModel:hover{
-  position:sticky !important;
-  left:110px !important;
-  background:#ffffff !important;
-}
-#productosTab .productTable thead .freezeModel:hover{
-  background:#000000 !important;
-  color:#ffffff !important;
-}
-
-/* 8) Imagen mantiene zoom/clic, pero sin animación ni movimiento */
-#productosTab .productImg,
-#productosTab .productImg:hover,
-#productosTab .productImg:focus,
-#productosTab .productImg:active{
-  cursor:zoom-in !important;
-  transform:none !important;
-  transition:none !important;
-  animation:none !important;
-  box-shadow:none !important;
-  filter:none !important;
-}
-
-/* 9) Ordenamiento visible y funcional */
-#productosTab .productTable th.sortable{
-  cursor:pointer !important;
-}
-#productosTab .productTable th.sortable .sortIcon{
-  pointer-events:none !important;
-}
-
-/* 10) Mantener lightbox con zoom */
-#productLightbox img{
-  transition:transform .18s ease !important;
-}
-
-
-/* V105 - Tabla Productos estable: freeze Imagen/Modelo sin movimiento ni parpadeo */
-#productosTab .productTableWrap{
-  overflow:auto !important;
-  max-height:780px !important;
-  position:relative !important;
-  scroll-behavior:auto !important;
-  overscroll-behavior:contain !important;
-  transform:none !important;
-  transition:none !important;
-  animation:none !important;
-}
-
-/* Desactivar cualquier animación, hover o movimiento previo */
-#productosTab .productTable,
-#productosTab .productTable *,
-#productosTab .productTable *::before,
-#productosTab .productTable *::after{
-  transition:none !important;
-  animation:none !important;
-  transform:none !important;
-  filter:none !important;
-}
-
-/* Quitar resize/handles */
-#productosTab .colResizeHandle,
-#productosTab .colResizer,
-#productosTab [class*="Resize"],
-#productosTab [class*="resize"]{
-  display:none !important;
-  width:0 !important;
-  pointer-events:none !important;
-}
-
-/* Tabla estable */
-#productosTab .productTable{
-  border-collapse:separate !important;
-  border-spacing:0 !important;
-  table-layout:fixed !important;
-  width:max-content !important;
-  min-width:2100px !important;
-}
-
-/* Celdas estables */
-#productosTab .productTable th,
-#productosTab .productTable td{
-  position:relative !important;
-  background:#fff !important;
-  box-shadow:none !important;
-  transform:none !important;
-  transition:none !important;
-  animation:none !important;
-  overflow:hidden !important;
-  text-overflow:ellipsis !important;
-  white-space:nowrap !important;
-}
-
-/* Header fijo vertical */
-#productosTab .productTable thead th{
-  position:sticky !important;
-  top:0 !important;
+#downloadProductsExcel{
   background:#000 !important;
   color:#fff !important;
-  z-index:50 !important;
+  border-color:#000 !important;
 }
 
-/* Sin efectos al hover */
-#productosTab .productTable tr:hover,
-#productosTab .productTable tr:hover td,
-#productosTab .productTable td:hover,
-#productosTab .productTable th:hover{
-  background:#fff !important;
-  color:inherit !important;
-  box-shadow:none !important;
-  transform:none !important;
-  filter:none !important;
-  border-radius:0 !important;
-}
-
-/* Header permanece negro al hover */
-#productosTab .productTable thead th:hover{
-  background:#000 !important;
-  color:#fff !important;
-}
-
-/* Freeze SOLO Imagen */
-#productosTab .productTable th:nth-child(1),
-#productosTab .productTable td:nth-child(1){
-  position:sticky !important;
-  left:0 !important;
-  width:110px !important;
-  min-width:110px !important;
-  max-width:110px !important;
-  z-index:60 !important;
-  background:#fff !important;
-  box-shadow:none !important;
-}
-
-/* Freeze SOLO Modelo */
-#productosTab .productTable th:nth-child(2),
-#productosTab .productTable td:nth-child(2){
-  position:sticky !important;
-  left:110px !important;
-  width:165px !important;
-  min-width:165px !important;
-  max-width:165px !important;
-  z-index:59 !important;
-  background:#fff !important;
-  box-shadow:none !important;
-}
-
-/* Headers congelados sobre la tabla */
-#productosTab .productTable thead th:nth-child(1){
-  background:#000 !important;
-  color:#fff !important;
-  z-index:90 !important;
-}
-#productosTab .productTable thead th:nth-child(2){
-  background:#000 !important;
-  color:#fff !important;
-  z-index:89 !important;
-}
-
-/* Evitar que hover cambie el sticky */
-#productosTab .productTable td:nth-child(1):hover,
-#productosTab .productTable th:nth-child(1):hover{
-  position:sticky !important;
-  left:0 !important;
-}
-#productosTab .productTable td:nth-child(2):hover,
-#productosTab .productTable th:nth-child(2):hover{
-  position:sticky !important;
-  left:110px !important;
-}
-
-/* La imagen conserva clic/zoom pero sin animación */
-#productosTab .productImg,
-#productosTab .productImg:hover{
-  cursor:zoom-in !important;
-  transform:none !important;
-  box-shadow:none !important;
-  transition:none !important;
-}
-
-
-/* V106 - Corrección definitiva visual Productos: sin parpadeo, sin movimiento, freeze estable */
-#status{
+/* Ocultar texto de estado Google Sheets */
+#status:empty{
   display:none !important;
 }
 
-/* Contenedor de tabla: scroll normal y estable */
+/* Contenedor estable */
 #productosTab .productTableWrap{
   overflow:auto !important;
-  max-height:780px !important;
-  position:relative !important;
-  background:#ffffff !important;
+  overflow-anchor:none !important;
   scroll-behavior:auto !important;
   overscroll-behavior:contain !important;
+  -webkit-overflow-scrolling:auto !important;
   transform:none !important;
   transition:none !important;
   animation:none !important;
@@ -1830,13 +1545,12 @@
   min-width:2100px !important;
   border-collapse:separate !important;
   border-spacing:0 !important;
-  background:#ffffff !important;
   transform:none !important;
   transition:none !important;
   animation:none !important;
 }
 
-/* Eliminar cualquier resize real o visual */
+/* Quitar por completo resize de columnas */
 #productosTab .colResizeHandle,
 #productosTab .colResizer,
 #productosTab [class*="Resize"],
@@ -1848,13 +1562,14 @@
   pointer-events:none !important;
 }
 
-/* Celdas sin movimiento ni efectos */
-#productosTab .productTable th,
-#productosTab .productTable td,
-#productosTab .productTable tr,
-#productosTab .productTable tbody,
-#productosTab .productTable thead,
-#productosTab .productTable *{
+/* Eliminar todo efecto visual al hover/focus/active */
+#productosTab .productTable,
+#productosTab .productTable *,
+#productosTab .productTable *::before,
+#productosTab .productTable *::after,
+#productosTab .productTable *:hover,
+#productosTab .productTable *:focus,
+#productosTab .productTable *:active{
   transition:none !important;
   animation:none !important;
   transform:none !important;
@@ -1862,14 +1577,29 @@
   box-shadow:none !important;
 }
 
-/* Evitar que el hover cambie layout, fondo, z-index o tamaño */
+/* Celdas fijas en tamaño, sin expandirse */
+#productosTab .productTable th,
+#productosTab .productTable td{
+  background:#fff !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  min-width:0 !important;
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+  box-shadow:none !important;
+  contain:paint !important;
+}
+
+/* Nada cambia al pasar el cursor */
 #productosTab .productTable tr:hover,
-#productosTab .productTable tr:hover td,
 #productosTab .productTable tbody tr:hover,
+#productosTab .productTable tr:hover td,
 #productosTab .productTable tbody tr:hover td,
 #productosTab .productTable td:hover,
 #productosTab .productTable th:hover{
-  background:#ffffff !important;
+  background:#fff !important;
   color:inherit !important;
   transform:none !important;
   transition:none !important;
@@ -1878,29 +1608,27 @@
   filter:none !important;
   border-radius:0 !important;
   outline:none !important;
-  cursor:default !important;
 }
 
-/* Header fijo: siempre negro */
+/* Header siempre fijo y negro */
 #productosTab .productTable thead th,
 #productosTab .productTable thead th:hover{
   position:sticky !important;
   top:0 !important;
-  background:#000000 !important;
-  color:#ffffff !important;
-  z-index:70 !important;
+  background:#000 !important;
+  color:#fff !important;
+  z-index:50 !important;
 }
 
-/* Desactivar TOTAL FILTRADO pegado al fondo, causa parpadeo al scroll */
+/* Quitar footer sticky para evitar brincos al scroll */
 #productosTab .productTable tfoot td{
   position:static !important;
   bottom:auto !important;
   z-index:auto !important;
-  background:#ffffff !important;
-  box-shadow:none !important;
+  background:#fff !important;
 }
 
-/* Freeze estable solo Imagen */
+/* Freeze estable Imagen */
 #productosTab .productTable th:nth-child(1),
 #productosTab .productTable td:nth-child(1){
   position:sticky !important;
@@ -1908,14 +1636,13 @@
   width:110px !important;
   min-width:110px !important;
   max-width:110px !important;
+  background:#fff !important;
   z-index:80 !important;
-  background:#ffffff !important;
-  transform:none !important;
-  transition:none !important;
   box-shadow:none !important;
+  transform:none !important;
 }
 
-/* Freeze estable solo Modelo */
+/* Freeze estable Modelo */
 #productosTab .productTable th:nth-child(2),
 #productosTab .productTable td:nth-child(2){
   position:sticky !important;
@@ -1923,21 +1650,20 @@
   width:165px !important;
   min-width:165px !important;
   max-width:165px !important;
+  background:#fff !important;
   z-index:79 !important;
-  background:#ffffff !important;
-  transform:none !important;
-  transition:none !important;
   box-shadow:none !important;
+  transform:none !important;
 }
 
-/* Headers congelados sobre todo */
+/* Headers congelados encima */
 #productosTab .productTable thead th:nth-child(1),
 #productosTab .productTable thead th:nth-child(1):hover{
   position:sticky !important;
   left:0 !important;
   top:0 !important;
-  background:#000000 !important;
-  color:#ffffff !important;
+  background:#000 !important;
+  color:#fff !important;
   z-index:120 !important;
 }
 #productosTab .productTable thead th:nth-child(2),
@@ -1945,40 +1671,42 @@
   position:sticky !important;
   left:110px !important;
   top:0 !important;
-  background:#000000 !important;
-  color:#ffffff !important;
+  background:#000 !important;
+  color:#fff !important;
   z-index:119 !important;
 }
 
-/* Mantener columnas congeladas también en hover */
+/* Reaplicar sticky en hover sin mover */
 #productosTab .productTable td:nth-child(1):hover{
   position:sticky !important;
   left:0 !important;
-  background:#ffffff !important;
+  background:#fff !important;
   z-index:80 !important;
 }
 #productosTab .productTable td:nth-child(2):hover{
   position:sticky !important;
   left:110px !important;
-  background:#ffffff !important;
+  background:#fff !important;
   z-index:79 !important;
 }
 
-/* Quitar expansión de celdas largas en hover */
-#productosTab .productTable td:hover,
+/* Evitar tooltips/expansiones antiguas */
 #productosTab .productTable td:nth-child(3):hover,
 #productosTab .productTable td:nth-child(4):hover,
 #productosTab .productTable td:nth-child(5):hover,
 #productosTab .productTable td:nth-child(6):hover{
-  min-width:0 !important;
-  max-width:none !important;
+  position:relative !important;
   white-space:nowrap !important;
   overflow:hidden !important;
   text-overflow:ellipsis !important;
+  min-width:0 !important;
+  max-width:none !important;
   padding:13px 11px !important;
+  border:0 !important;
+  border-radius:0 !important;
 }
 
-/* Imagen sigue clickeable para zoom, pero sin animación */
+/* Imagen conserva clic/zoom, pero no hace escala ni sombra al hover */
 #productosTab .productImg,
 #productosTab .productImg:hover,
 #productosTab .productImg:focus,
@@ -1991,7 +1719,7 @@
   filter:none !important;
 }
 
-/* Mantener el lightbox con zoom funcional */
+/* El lightbox mantiene zoom */
 #productLightbox img{
   transition:transform .18s ease !important;
 }
@@ -2061,7 +1789,7 @@
     <div class="filter" data-pkey="pzsCompradas"><button>Piezas compradas</button><div class="menu"></div></div>
     <div class="filter" data-pkey="pzsVendidas"><button>Piezas vendidas</button><div class="menu"></div></div>
     <div class="filter" data-pkey="invPzs"><button>Inventario piezas</button><div class="menu"></div></div>
-    <div class="actions"><button class="smallBtn dark" id="downloadProductsExcel">Descargar productos Excel</button><button class="smallBtn dark" id="clearProductFilters">Limpiar filtros de productos</button></div>
+    <div class="actions productActions"><button class="smallBtn dark" id="downloadProductsExcel">Descargar productos Excel</button><button class="smallBtn dark" id="clearProductFilters">Limpiar filtros de productos</button></div>
   </div>
   <div id="activeProductFilters" class="chips productChips"></div>
   <div id="productTotals" class="productTotals"></div>
@@ -3012,31 +2740,20 @@ function renderProductsTable(){
   const filtered=sortProductRows(baseFiltered);
   const cols=productRows.headers||[];
   const displayIdx=productDisplayIndices();
-
-  table.querySelector('thead').innerHTML='<tr>'+displayIdx.map((i,pos)=>{
-    const freezeClass = pos===0 ? 'freezeImg' : (pos===1 ? 'freezeModel' : '');
-    return `<th class="sortable ${freezeClass} ${productSort.index===i?'sorted':''}" data-sort-index="${i}" title="${sanitizeHtml(cols[i])} · ordenar de mayor a menor / menor a mayor"><span class="sortHead"><span class="sortLabel">${sanitizeHtml(friendlyProductHeader(cols[i]))}</span><span class="sortIcon">${productSortIcon(i)}</span></span></th>`;
-  }).join('')+'</tr>';
-
-  table.querySelector('tbody').innerHTML=filtered.map(r=>'<tr>'+displayIdx.map((i,pos)=>{
+  table.querySelector('thead').innerHTML='<tr>'+displayIdx.map(i=>`<th class="sortable ${productSort.index===i?'sorted':''}" onclick="setProductSort(${i})" title="${sanitizeHtml(cols[i])} · ordenar de mayor a menor / menor a mayor"><span class="sortHead"><span class="sortLabel">${sanitizeHtml(friendlyProductHeader(cols[i]))}</span><span class="sortIcon">${productSortIcon(i)}</span></span></th>`).join('')+'</tr>';
+  table.querySelector('tbody').innerHTML=filtered.map(r=>'<tr>'+displayIdx.map(i=>{
     const c=cols[i];
-    const freezeClass = pos===0 ? 'freezeImg' : (pos===1 ? 'freezeModel' : '');
-    if(pos===0){
-      return `<td class="${freezeClass}">${r.image?`<img class="productImg" src="${sanitizeHtml(r.image)}" loading="lazy" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('div'),{className:'productPlaceholder',textContent:'SIN IMG'}));">`:'<div class="productPlaceholder">SIN IMG</div>'}</td>`;
-    }
-    const cls=[freezeClass, i===1?'productModel':(i===2?'productDesc':(isProductNumericHeader(c)||norm(c).includes('meses de publicacion')?'productNum':''))].filter(Boolean).join(' ');
+    if(i===0){return `<td>${r.image?`<img class="productImg" src="${sanitizeHtml(r.image)}" loading="lazy" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('div'),{className:'productPlaceholder',textContent:'SIN IMG'}));">`:'<div class="productPlaceholder">SIN IMG</div>'}</td>`}
+    const cls=i===1?'productModel':(i===2?'productDesc':(isProductNumericHeader(c)||norm(c).includes('meses de publicacion')?'productNum':''));
     const rendered=fmtProductCellComputed(r,c,totals);
     const cellText=String(rendered).replace(/<[^>]*>/g,'');
-    return `<td class="${cls}" title="${sanitizeHtml(cellText)}">${rendered}</td>`;
+    return `<td class="${cls}" title="${sanitizeHtml(cellText)}">${rendered}</td>`
   }).join('')+'</tr>').join('')||`<tr><td colspan="${displayIdx.length||1}" style="padding:24px;color:#777">Sin resultados.</td></tr>`;
-
   renderProductTotals(baseFiltered);
   renderProductTotalsFooter(table, baseFiltered, displayIdx, cols);
   const st=document.getElementById('productsStatus');
   if(st)st.textContent='';
   renderProductChips();
-
-  /* Freeze estable: sin resize, sin handles */
   /* setupProductTableEnhancements desactivado */
 }
 async function renderProductsFromWorkbook(wb,buf){try{const ws=wb.Sheets[wb.SheetNames[1]]; if(!ws){document.getElementById('productsStatus').textContent='No se encontró una segunda pestaña en el Excel.';return}const arr=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true}); const headerIndex=arr.findIndex(r=>r.some(v=>norm(v)==='imagen')&&r.some(v=>norm(v).startsWith('modelo'))); if(headerIndex<0){document.getElementById('productsStatus').textContent='No se detectó encabezado de productos en la pestaña 2.';return}const headers=ensureInventoryMoneyHeader(arr[headerIndex].map(v=>String(v||'').trim()).filter((v,i)=>v||i<12)); const imgByRow=await extractImagesFromSheet2(buf,wb); const rows=[]; for(let i=headerIndex+1;i<arr.length;i++){const excelRow=i+1; const values=arr[i].slice(0,headers.length); if(!values.some(v=>String(v||'').trim())&&!imgByRow[excelRow])continue; rows.push({values,image:imgByRow[excelRow]||'',search:productSearchText(values,headers)});} productRows=rows; productRows.headers=headers; productSort={index:null,dir:null}; Object.values(productFilterState).forEach(s=>s.clear()); refreshProductFilters(); renderProductsTable();}catch(err){document.getElementById('productsStatus').textContent='No se pudo renderizar la pestaña Productos: '+err.message;}}
@@ -3236,251 +2953,111 @@ document.querySelectorAll('.filter button').forEach(b=>b.addEventListener('click
 
 
 
-/* V104 - Freeze estable sin resize ni movimiento visual */
+/* V107 - Columnas redimensionables desactivadas. Freeze estable sin movimiento. */
 function setupProductTableEnhancements(){
   const table=document.getElementById('productTable');
   if(!table) return;
-  table.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(el=>el.remove());
   table.classList.remove('resizing');
+  table.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(el=>el.remove());
 }
 function updateProductStickyOffsets(){
   const table=document.getElementById('productTable');
   if(!table) return;
-  table.style.setProperty('--sticky-col-img','110px');
-  table.style.setProperty('--sticky-col-model','170px');
+  table.style.setProperty('--sticky-col-1','110px');
+  table.style.setProperty('--sticky-col-2','165px');
 }
 
 </script>
 
 <script>
-/* V104 FINAL - Ordenamiento funcional + limpieza permanente de resize */
+/* V107 - descarga Excel y limpieza de resize sin polling */
 (function(){
-  function cleanProductResize(){
+  function removeResizeHandles(){
     const table=document.querySelector('#productosTab .productTable');
     if(!table) return;
     table.classList.remove('resizing');
     table.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(el=>el.remove());
-  }
-
-  document.addEventListener('click', function(e){
-    const th=e.target.closest('#productosTab .productTable th.sortable');
-    if(!th) return;
-    const idx=Number(th.dataset.sortIndex);
-    if(Number.isFinite(idx) && typeof setProductSort === 'function'){
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      setProductSort(idx);
-      setTimeout(cleanProductResize,0);
-    }
-  }, true);
-
-  window.addEventListener('load', cleanProductResize);
-  document.addEventListener('DOMContentLoaded', cleanProductResize);
-
-  const obs=new MutationObserver(cleanProductResize);
-  window.addEventListener('load', function(){
-    const target=document.querySelector('#productosTab');
-    if(target) obs.observe(target,{childList:true,subtree:true});
-    cleanProductResize();
-  });
-})();
-</script>
-
-
-<script>
-/* V105 - Estabilizar Productos y descargar Excel */
-(function(){
-  function stabilizeProductsTable(){
-    const table = document.querySelector('#productosTab .productTable');
-    if(!table) return;
-    table.classList.remove('resizing');
-    table.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(function(el){ el.remove(); });
     table.style.setProperty('--sticky-col-1','110px');
     table.style.setProperty('--sticky-col-2','165px');
   }
 
-  function valueForExport(v){
-    if(v === undefined || v === null) return '';
-    return String(v).replace(/"/g,'""');
-  }
-
-  window.downloadProductsExcel = function(){
-    try{
-      let rows = [];
-      if(typeof filteredProducts === 'function'){
-        rows = filteredProducts();
-      }else if(window.state && Array.isArray(state.productos)){
-        rows = state.productos;
-      }
-
-      const headers = [
-        'Imagen','Modelo','Descripción','Categoría','Estilo','Proveedor',
-        'Precio Venta','Pzas Compradas','$ Comprado','Pzas Vendidas',
-        '$ Vendido','Sell Through','Inventario Piezas','$ Inventario',
-        'Meses Publicación','Tipo'
-      ];
-
-      const csvRows = [headers.map(function(h){return '"' + h + '"';}).join(',')];
-
-      rows.forEach(function(r){
-        const line = [
-          r.imagen || r.Imagen || '',
-          r.modelo || r.Modelo || '',
-          r.descripcion || r.Descripción || r.Descripcion || '',
-          r.categoria || r.Categoría || r.Categoria || '',
-          r.estilo || r.Estilo || '',
-          r.proveedor || r.Proveedor || '',
-          r.precioVenta ?? r['Precio Venta'] ?? '',
-          r.pzasCompradas ?? r['Pzas Compradas'] ?? '',
-          r.comprado ?? r['$ Comprado'] ?? '',
-          r.pzasVendidas ?? r['Pzas Vendidas'] ?? '',
-          r.vendido ?? r['$ Vendido'] ?? '',
-          r.sell !== undefined ? ((Number(r.sell)||0)*100).toFixed(1)+'%' : (r['Sell Through'] || ''),
-          r.invPzs ?? r['Inventario Piezas'] ?? r.Inventario ?? '',
-          r.invDinero ?? r['$ Inventario'] ?? '',
-          r.mesesPub ?? r['Meses Publicación'] ?? '',
-          r.tipo || r.Tipo || ''
-        ].map(function(v){ return '"' + valueForExport(v) + '"'; }).join(',');
-        csvRows.push(line);
-      });
-
-      const blob = new Blob(["\ufeff" + csvRows.join('\n')], {type:'text/csv;charset=utf-8;'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'productos_perry_ellis_filtrado.csv';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }catch(e){
-      console.error('Error descargando productos:', e);
-      alert('No se pudo descargar el archivo de productos.');
-    }
-  };
-
-  function bindDownloadButton(){
-    const btn = document.getElementById('downloadProductsExcel');
-    if(btn && !btn.dataset.bound){
-      btn.dataset.bound = 'true';
-      btn.addEventListener('click', window.downloadProductsExcel);
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', function(){
-    stabilizeProductsTable();
-    bindDownloadButton();
-  });
-  window.addEventListener('load', function(){
-    stabilizeProductsTable();
-    bindDownloadButton();
-  });
-  setInterval(function(){
-    stabilizeProductsTable();
-    bindDownloadButton();
-  }, 1000);
-})();
-</script>
-
-
-<script>
-/* V106 - estabilizar tabla y descarga Excel */
-(function(){
-  function stabilizeProductsTable(){
-    const table = document.querySelector('#productosTab .productTable');
-    if(!table) return;
-    table.classList.remove('resizing');
-    table.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(function(el){
-      el.remove();
-    });
-    table.style.setProperty('--sticky-col-1','110px');
-    table.style.setProperty('--sticky-col-2','165px');
-  }
-
-  function getProductsRows(){
+  function getRowsForDownload(){
     if(typeof filteredProducts === 'function') return filteredProducts();
+    if(window.state && Array.isArray(state.productsFiltered)) return state.productsFiltered;
     if(window.state && Array.isArray(state.productos)) return state.productos;
+    if(window.productRows && Array.isArray(window.productRows)) return window.productRows;
     return [];
   }
 
-  function cleanValue(v){
-    if(v === undefined || v === null) return '';
-    return v;
-  }
+  function safe(v){ return v===undefined || v===null ? '' : v; }
 
   window.downloadProductsExcel = function(){
     try{
-      const rows = getProductsRows();
-      const data = rows.map(function(r){
-        return {
-          Imagen: cleanValue(r.imagen || r.Imagen),
-          Modelo: cleanValue(r.modelo || r.Modelo),
-          Descripción: cleanValue(r.descripcion || r.Descripción || r.Descripcion),
-          Categoría: cleanValue(r.categoria || r.Categoría || r.Categoria),
-          Estilo: cleanValue(r.estilo || r.Estilo),
-          Proveedor: cleanValue(r.proveedor || r.Proveedor),
-          'Precio Venta': cleanValue(r.precioVenta ?? r['Precio Venta']),
-          'Pzas Compradas': cleanValue(r.pzasCompradas ?? r['Pzas Compradas']),
-          '$ Comprado': cleanValue(r.comprado ?? r['$ Comprado']),
-          'Pzas Vendidas': cleanValue(r.pzasVendidas ?? r['Pzas Vendidas']),
-          '$ Vendido': cleanValue(r.vendido ?? r['$ Vendido']),
-          'Sell Through': r.sell !== undefined ? ((Number(r.sell)||0)*100).toFixed(1)+'%' : cleanValue(r['Sell Through']),
-          'Inventario Piezas': cleanValue(r.invPzs ?? r['Inventario Piezas'] ?? r.Inventario),
-          '$ Inventario': cleanValue(r.invDinero ?? r['$ Inventario']),
-          'Meses Publicación': cleanValue(r.mesesPub ?? r['Meses Publicación']),
-          Tipo: cleanValue(r.tipo || r.Tipo)
-        };
-      });
+      const rows=getRowsForDownload();
+
+      const mapped=rows.map(r=>({
+        Imagen: safe(r.imagen || r.Imagen || r.image),
+        Modelo: safe(r.modelo || r.Modelo),
+        Descripción: safe(r.descripcion || r.Descripción || r.Descripcion),
+        Categoría: safe(r.categoria || r.Categoría || r.Categoria),
+        Estilo: safe(r.estilo || r.Estilo),
+        Proveedor: safe(r.proveedor || r.Proveedor),
+        'Precio Venta': safe(r.precioVenta ?? r['Precio Venta']),
+        'Pzas Compradas': safe(r.pzasCompradas ?? r['Pzas Compradas']),
+        '$ Comprado': safe(r.comprado ?? r['$ Comprado']),
+        'Pzas Vendidas': safe(r.pzasVendidas ?? r['Pzas Vendidas']),
+        '$ Vendido': safe(r.vendido ?? r['$ Vendido']),
+        'Sell Through': r.sell !== undefined ? ((Number(r.sell)||0)*100).toFixed(1)+'%' : safe(r['Sell Through']),
+        'Inventario Piezas': safe(r.invPzs ?? r['Inventario Piezas'] ?? r.Inventario),
+        '$ Inventario': safe(r.invDinero ?? r['$ Inventario']),
+        'Meses Publicación': safe(r.mesesPub ?? r['Meses Publicación']),
+        Tipo: safe(r.tipo || r.Tipo)
+      }));
 
       if(window.XLSX){
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.json_to_sheet(data);
-        XLSX.utils.book_append_sheet(wb, ws, 'Productos');
-        XLSX.writeFile(wb, 'productos_perry_ellis_filtrado.xlsx');
+        const wb=XLSX.utils.book_new();
+        const ws=XLSX.utils.json_to_sheet(mapped);
+        XLSX.utils.book_append_sheet(wb,ws,'Productos');
+        XLSX.writeFile(wb,'productos_perry_ellis_filtrado.xlsx');
       }else{
-        const headers = Object.keys(data[0] || {});
-        const csv = [
-          headers.join(','),
-          ...data.map(row => headers.map(h => '"' + String(row[h] ?? '').replace(/"/g,'""') + '"').join(','))
-        ].join('\n');
-        const blob = new Blob(["\ufeff" + csv], {type:'text/csv;charset=utf-8;'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'productos_perry_ellis_filtrado.csv';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        const headers=Object.keys(mapped[0]||{});
+        const csv=[headers.join(','), ...mapped.map(row=>headers.map(h=>`"${String(row[h]??'').replace(/"/g,'""')}"`).join(','))].join('\n');
+        const blob=new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8;'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url;
+        a.download='productos_perry_ellis_filtrado.csv';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }
-    }catch(e){
-      console.error('Error descargando productos:', e);
+    }catch(err){
+      console.error(err);
       alert('No se pudo descargar productos.');
     }
   };
 
-  function bindDownloadButton(){
-    const btn = document.getElementById('downloadProductsExcel');
+  function bindDownload(){
+    const btn=document.getElementById('downloadProductsExcel');
     if(btn && !btn.dataset.bound){
-      btn.dataset.bound = 'true';
+      btn.dataset.bound='true';
       btn.addEventListener('click', window.downloadProductsExcel);
     }
   }
 
-  document.addEventListener('DOMContentLoaded', function(){
-    stabilizeProductsTable();
-    bindDownloadButton();
-  });
-  window.addEventListener('load', function(){
-    stabilizeProductsTable();
-    bindDownloadButton();
+  document.addEventListener('DOMContentLoaded', ()=>{
+    removeResizeHandles();
+    bindDownload();
+    const table=document.querySelector('#productosTab .productTable');
+    if(table && window.MutationObserver){
+      const obs=new MutationObserver(()=>removeResizeHandles());
+      obs.observe(table,{childList:true,subtree:true});
+    }
   });
 
-  setInterval(function(){
-    stabilizeProductsTable();
-    bindDownloadButton();
-  }, 700);
+  window.addEventListener('load', ()=>{
+    removeResizeHandles();
+    bindDownload();
+  });
 })();
 </script>
 
