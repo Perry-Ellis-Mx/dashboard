@@ -2291,188 +2291,233 @@
 
 #productLightbox img{transition:transform .18s ease !important;}
 
+</style>
 
-
-/* V111 - Productos 100% estable: freeze real Imagen/Modelo, sin hover, sin zoom, sin resize */
+<style>
+/* V113 - Productos estable manteniendo lightbox, zoom, ordenamiento y freeze real */
 #status{display:none !important;}
-#productosTab,
-#productosTab *{
-  scroll-behavior:auto !important;
-}
-#productosTab .productTableWrap.originalHidden{
-  display:none !important;
-}
-#productosTab .productsHead{
-  display:flex !important;
-  align-items:flex-start !important;
-  justify-content:space-between !important;
-  gap:16px !important;
-}
-#productosTab .downloadProductsRight{
-  display:flex !important;
-  justify-content:flex-end !important;
-  align-items:center !important;
-  margin:0 !important;
-  min-width:max-content !important;
-}
-#downloadProductsExcel{
-  background:#000 !important;
-  color:#fff !important;
-  border-color:#000 !important;
-  border-radius:999px !important;
-  height:38px !important;
-  padding:0 16px !important;
-  white-space:nowrap !important;
-}
-#productosTab .stableProductsGrid{
-  display:flex !important;
-  width:100% !important;
-  height:780px !important;
+#productosTab .stableProductsGrid{display:none !important;}
+#productosTab .productTableWrap.originalHidden{display:block !important;}
+
+#productosTab .productTableWrap{
+  display:block !important;
+  position:relative !important;
+  overflow:auto !important;
   max-height:780px !important;
+  width:100% !important;
+  background:#fff !important;
   border:1px solid #e7e7e7 !important;
   border-radius:24px !important;
-  overflow:hidden !important;
-  background:#fff !important;
   box-shadow:0 16px 42px rgba(0,0,0,.04) !important;
-  contain:layout paint !important;
-}
-#productosTab .stableLeft{
-  flex:0 0 275px !important;
-  width:275px !important;
-  height:100% !important;
-  overflow:hidden !important;
-  background:#fff !important;
-  border-right:1px solid #e7e7e7 !important;
-}
-#productosTab .stableRight{
-  flex:1 1 auto !important;
-  height:100% !important;
-  overflow:auto !important;
-  background:#fff !important;
+  scroll-behavior:auto !important;
+  overflow-anchor:none !important;
   overscroll-behavior:contain !important;
   -webkit-overflow-scrolling:auto !important;
+  contain:none !important;
 }
-#productosTab .stableProductsGrid table{
+
+#productosTab .productTable{
+  table-layout:fixed !important;
+  width:max-content !important;
+  min-width:2100px !important;
   border-collapse:separate !important;
   border-spacing:0 !important;
-  table-layout:fixed !important;
   background:#fff !important;
-  margin:0 !important;
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
 }
-#productosTab .stableLeft table{width:275px !important;}
-#productosTab .stableRight table{width:max-content !important;min-width:1800px !important;}
-#productosTab .stableProductsGrid table,
-#productosTab .stableProductsGrid thead,
-#productosTab .stableProductsGrid tbody,
-#productosTab .stableProductsGrid tr,
-#productosTab .stableProductsGrid th,
-#productosTab .stableProductsGrid td,
-#productosTab .stableProductsGrid img,
-#productosTab .stableProductsGrid div,
-#productosTab .stableProductsGrid span,
-#productosTab .stableProductsGrid *::before,
-#productosTab .stableProductsGrid *::after{
+
+#productosTab .productTable,
+#productosTab .productTable *{
   transition:none !important;
   animation:none !important;
   transform:none !important;
-  box-shadow:none !important;
   filter:none !important;
+  scroll-behavior:auto !important;
 }
-#productosTab .stableProductsGrid th{
+
+#productosTab .productTable thead th{
+  position:sticky !important;
+  top:0 !important;
+  z-index:50 !important;
+  height:68px !important;
+  min-height:68px !important;
+  max-height:68px !important;
   background:#000 !important;
   color:#fff !important;
-  height:64px !important;
-  max-height:64px !important;
-  padding:10px 8px !important;
-  font-size:10px !important;
-  font-weight:800 !important;
-  text-transform:uppercase !important;
-  letter-spacing:.04em !important;
-  text-align:center !important;
+  border-bottom:1px solid #000 !important;
   border-right:1px solid #222 !important;
-  border-bottom:0 !important;
+  padding:10px 24px 10px 10px !important;
+  vertical-align:middle !important;
   white-space:normal !important;
   overflow:hidden !important;
-  line-height:1.15 !important;
-  vertical-align:middle !important;
-  position:static !important;
+  text-overflow:clip !important;
+  cursor:pointer !important;
+  box-shadow:none !important;
 }
-#productosTab .stableProductsGrid td{
+
+#productosTab .productTable thead th:hover,
+#productosTab .productTable thead th.sortable:hover{
+  background:#000 !important;
+  color:#fff !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+#productosTab .productTable tbody td{
   height:96px !important;
   min-height:96px !important;
   max-height:96px !important;
   background:#fff !important;
   color:#111 !important;
-  padding:10px 11px !important;
   border-bottom:1px solid #eeeeee !important;
   border-right:1px solid #f3f3f3 !important;
+  padding:10px 11px !important;
+  vertical-align:middle !important;
   font-size:12px !important;
   line-height:1.25 !important;
   white-space:nowrap !important;
   overflow:hidden !important;
   text-overflow:ellipsis !important;
-  vertical-align:middle !important;
-  position:static !important;
   cursor:default !important;
+  box-shadow:none !important;
 }
-#productosTab .stableProductsGrid tr:hover,
-#productosTab .stableProductsGrid tr:hover td,
-#productosTab .stableProductsGrid td:hover,
-#productosTab .stableProductsGrid th:hover,
-#productosTab .stableProductsGrid img:hover{
-  background:inherit !important;
-  color:inherit !important;
+
+#productosTab .productTable tbody tr:hover td,
+#productosTab .productTable tbody td:hover{
+  background:#fff !important;
+  color:#111 !important;
   transform:none !important;
   box-shadow:none !important;
   filter:none !important;
   border-radius:0 !important;
-  cursor:default !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+  text-overflow:ellipsis !important;
+  position:static !important;
+  z-index:auto !important;
 }
-#productosTab .stableLeft th:nth-child(1),
-#productosTab .stableLeft td:nth-child(1){width:110px !important;text-align:center !important;}
-#productosTab .stableLeft th:nth-child(2),
-#productosTab .stableLeft td:nth-child(2){width:165px !important;text-align:left !important;}
-#productosTab .stableRight th,
-#productosTab .stableRight td{width:120px !important;text-align:center !important;}
-#productosTab .stableRight th:nth-child(1),
-#productosTab .stableRight td:nth-child(1){width:390px !important;text-align:left !important;}
-#productosTab .stableRight th:nth-child(2),
-#productosTab .stableRight td:nth-child(2){width:120px !important;text-align:left !important;}
-#productosTab .stableRight th:nth-child(3),
-#productosTab .stableRight td:nth-child(3){width:120px !important;text-align:left !important;}
-#productosTab .stableRight th:nth-child(4),
-#productosTab .stableRight td:nth-child(4){width:300px !important;text-align:left !important;}
-#productosTab .stableProductsGrid .productImg,
-#productosTab .stableProductsGrid .productImg:hover,
-#productosTab .stableProductsGrid img,
-#productosTab .stableProductsGrid img:hover{
-  width:76px !important;
-  height:76px !important;
-  object-fit:contain !important;
-  pointer-events:none !important;
-  cursor:default !important;
+
+/* Freeze Imagen + Modelo */
+#productosTab .productTable th:nth-child(1),
+#productosTab .productTable td:nth-child(1){
+  position:sticky !important;
+  left:0 !important;
+  width:110px !important;
+  min-width:110px !important;
+  max-width:110px !important;
+  text-align:center !important;
+}
+#productosTab .productTable th:nth-child(2),
+#productosTab .productTable td:nth-child(2){
+  position:sticky !important;
+  left:110px !important;
+  width:165px !important;
+  min-width:165px !important;
+  max-width:165px !important;
+  text-align:left !important;
+}
+#productosTab .productTable th:nth-child(1),
+#productosTab .productTable th:nth-child(2){
+  background:#000 !important;
+  color:#fff !important;
+  z-index:80 !important;
+}
+#productosTab .productTable td:nth-child(1),
+#productosTab .productTable td:nth-child(2){
+  background:#fff !important;
+  z-index:30 !important;
   transform:none !important;
   box-shadow:none !important;
-  transition:none !important;
-  animation:none !important;
-  background:#fff !important;
-  border:1px solid #e7e7e7 !important;
-  border-radius:12px !important;
-  margin:0 auto !important;
-  display:block !important;
 }
-#productosTab .stableProductsGrid .productPlaceholder{
-  width:76px !important;
-  height:76px !important;
+#productosTab .productTable td:nth-child(2){
+  box-shadow:8px 0 10px rgba(0,0,0,.035) !important;
+}
+
+#productosTab .productTable th:nth-child(3),#productosTab .productTable td:nth-child(3){width:390px !important;text-align:left !important;}
+#productosTab .productTable th:nth-child(4),#productosTab .productTable td:nth-child(4){width:120px !important;text-align:left !important;}
+#productosTab .productTable th:nth-child(5),#productosTab .productTable td:nth-child(5){width:120px !important;text-align:left !important;}
+#productosTab .productTable th:nth-child(6),#productosTab .productTable td:nth-child(6){width:300px !important;text-align:left !important;}
+#productosTab .productTable th:nth-child(n+7),#productosTab .productTable td:nth-child(n+7){width:120px !important;text-align:center !important;}
+#productosTab .productTable th:nth-child(19),#productosTab .productTable td:nth-child(19){width:120px !important;}
+
+#productosTab .productTable .sortHead{
+  position:relative !important;
+  display:block !important;
+  width:100% !important;
+  min-height:38px !important;
+  padding:0 !important;
+  transform:none !important;
+}
+#productosTab .productTable .sortLabel{
   display:flex !important;
   align-items:center !important;
   justify-content:center !important;
+  min-height:38px !important;
+  width:100% !important;
+  color:#fff !important;
+  font-size:10px !important;
+  font-weight:800 !important;
+  line-height:1.15 !important;
+  letter-spacing:.045em !important;
+  text-transform:uppercase !important;
+  text-align:center !important;
+  white-space:normal !important;
+  overflow:hidden !important;
+}
+#productosTab .productTable .sortIcon{
+  position:absolute !important;
+  right:-18px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  width:16px !important;
+  height:16px !important;
+  min-width:16px !important;
+  border-radius:50% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:rgba(255,255,255,.18) !important;
+  border:1px solid rgba(255,255,255,.16) !important;
+  color:#fff !important;
+  font-size:9px !important;
+  line-height:1 !important;
+  pointer-events:none !important;
+  box-shadow:none !important;
+}
+#productosTab .productTable th.sorted .sortIcon{background:#fff !important;color:#000 !important;}
+
+#productosTab .productImg,
+#productosTab .productImg:hover{
+  width:82px !important;
+  height:82px !important;
+  object-fit:contain !important;
+  background:#fff !important;
+  border:1px solid #e7e7e7 !important;
+  border-radius:14px !important;
+  padding:5px !important;
+  display:block !important;
+  margin:0 auto !important;
+  cursor:zoom-in !important;
+  pointer-events:auto !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+#productosTab .productPlaceholder{
+  width:82px !important;
+  height:82px !important;
   border:1px dashed #d7d7d7 !important;
-  border-radius:12px !important;
+  border-radius:14px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
   color:#999 !important;
   font-size:10px !important;
+  background:#fff !important;
   margin:0 auto !important;
 }
+
 #productosTab .colResizeHandle,
 #productosTab .colResizer,
 #productosTab [class*="Resize"],
@@ -2480,8 +2525,10 @@
   display:none !important;
   pointer-events:none !important;
 }
-#productLightbox{display:none !important;}
 
+#productLightbox{display:none;}
+#productLightbox.open{display:flex !important;}
+#productLightbox img{transition:transform .18s ease !important;cursor:zoom-in !important;}
 </style>
 </head>
 <body>
@@ -4072,284 +4119,60 @@ function updateProductStickyOffsets(){
 </script>
 
 
+
+
+
 <script>
-/* V111 - Productos estable: freeze Imagen/Modelo sin reconstrucción continua */
+/* V113 - estabilizador final Productos: conserva lightbox, zoom y sort; sin parpadeo al scroll */
 (function(){
-  let isBuilding = false;
-  let lastSignature = '';
-  let rightScrollTop = 0;
-  let rightScrollLeft = 0;
-  let rebuildTimer = null;
-  let originalObserver = null;
-
-  function cleanStatus(){
-    const st = document.getElementById('status');
-    if(st) st.innerHTML = '';
-  }
-
-  function ensureDownloadButton(){
-    const btn = document.getElementById('downloadProductsExcel');
-    const head = document.querySelector('#productosTab .productsHead');
-    if(!btn || !head) return;
-    let holder = document.querySelector('#productosTab .downloadProductsRight');
-    if(!holder){
-      holder = document.createElement('div');
-      holder.className = 'downloadProductsRight';
-      head.appendChild(holder);
-    }
-    if(btn.parentElement !== holder) holder.appendChild(btn);
-  }
-
-  function getOriginalTable(){
-    return document.querySelector('#productosTab .productTableWrap table.productTable, #productosTab table.productTable');
-  }
-
-  function getOriginalWrap(){
-    const table = getOriginalTable();
-    return table ? table.closest('.productTableWrap') : null;
-  }
-
-  function cleanClonedCell(cell){
-    const newCell = document.createElement(cell.tagName.toLowerCase());
-    newCell.innerHTML = cell.innerHTML;
-    newCell.className = cell.className || '';
-    newCell.removeAttribute('style');
-    newCell.removeAttribute('title');
-    newCell.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(el => el.remove());
-    newCell.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
-    newCell.querySelectorAll('img').forEach(img => {
-      img.removeAttribute('onclick');
-      img.removeAttribute('onmouseover');
-      img.removeAttribute('onmouseenter');
-      img.removeAttribute('onmousemove');
-      img.removeAttribute('onmouseout');
-      img.removeAttribute('onmouseleave');
-      img.setAttribute('draggable','false');
-      img.style.pointerEvents = 'none';
-    });
-    return newCell;
-  }
-
-  function tableSignature(table){
-    const rows = table.querySelectorAll('tbody tr').length;
-    const heads = table.querySelectorAll('thead th').length;
-    const txt = Array.from(table.querySelectorAll('tbody tr')).slice(0,5).map(tr => tr.innerText).join('|');
-    return heads + ':' + rows + ':' + txt.length + ':' + txt;
-  }
-
-  function createGrid(originalWrap){
-    let grid = document.querySelector('#productosTab .stableProductsGrid');
-    if(!grid){
-      grid = document.createElement('div');
-      grid.className = 'stableProductsGrid';
-      grid.innerHTML = '<div class="stableLeft"><table aria-label="Productos fijos"><thead><tr></tr></thead><tbody></tbody></table></div><div class="stableRight"><table aria-label="Productos métricas"><thead><tr></tr></thead><tbody></tbody></table></div>';
-      originalWrap.parentNode.insertBefore(grid, originalWrap);
-    }
-    return grid;
-  }
-
-  function syncScroll(grid){
-    const left = grid.querySelector('.stableLeft');
-    const right = grid.querySelector('.stableRight');
-    if(!left || !right || right.dataset.stableScrollBound === 'true') return;
-    right.dataset.stableScrollBound = 'true';
-    right.addEventListener('scroll', function(){
-      rightScrollTop = right.scrollTop;
-      rightScrollLeft = right.scrollLeft;
-      left.scrollTop = right.scrollTop;
-    }, {passive:true});
-    left.addEventListener('wheel', function(e){
-      e.preventDefault();
-      right.scrollTop += e.deltaY;
-      right.scrollLeft += e.deltaX;
-    }, {passive:false});
-  }
-
-  function buildStableProductsGrid(force){
-    if(isBuilding) return;
-    const originalTable = getOriginalTable();
-    const originalWrap = getOriginalWrap();
-    if(!originalTable || !originalWrap) return;
-
-    const headers = Array.from(originalTable.querySelectorAll('thead tr th'));
-    const rows = Array.from(originalTable.querySelectorAll('tbody tr'));
-    if(!headers.length || !rows.length) return;
-
-    const signature = tableSignature(originalTable);
-    if(!force && signature === lastSignature){
-      originalWrap.classList.add('originalHidden');
-      return;
-    }
-
-    isBuilding = true;
-    const grid = createGrid(originalWrap);
-    const leftHead = grid.querySelector('.stableLeft thead tr');
-    const rightHead = grid.querySelector('.stableRight thead tr');
-    const leftBody = grid.querySelector('.stableLeft tbody');
-    const rightBody = grid.querySelector('.stableRight tbody');
-
-    leftHead.textContent = '';
-    rightHead.textContent = '';
-    leftBody.textContent = '';
-    rightBody.textContent = '';
-
-    headers.forEach(function(th, i){
-      const newTh = cleanClonedCell(th);
-      if(i < 2) leftHead.appendChild(newTh);
-      else rightHead.appendChild(newTh);
-    });
-
-    const leftFrag = document.createDocumentFragment();
-    const rightFrag = document.createDocumentFragment();
-
-    rows.forEach(function(row){
-      const cells = Array.from(row.children);
-      const leftTr = document.createElement('tr');
-      const rightTr = document.createElement('tr');
-      cells.forEach(function(cell, i){
-        const newCell = cleanClonedCell(cell);
-        if(i < 2) leftTr.appendChild(newCell);
-        else rightTr.appendChild(newCell);
-      });
-      leftFrag.appendChild(leftTr);
-      rightFrag.appendChild(rightTr);
-    });
-
-    leftBody.appendChild(leftFrag);
-    rightBody.appendChild(rightFrag);
-    originalWrap.classList.add('originalHidden');
-    lastSignature = signature;
-    syncScroll(grid);
-
-    const left = grid.querySelector('.stableLeft');
-    const right = grid.querySelector('.stableRight');
-    if(right && left){
-      right.scrollTop = rightScrollTop;
-      right.scrollLeft = rightScrollLeft;
-      left.scrollTop = rightScrollTop;
-    }
-
-    requestAnimationFrame(function(){ isBuilding = false; });
-  }
-
-  function tableRowsForDownload(){
-    const grid = document.querySelector('#productosTab .stableProductsGrid');
-    const leftTable = grid ? grid.querySelector('.stableLeft table') : null;
-    const rightTable = grid ? grid.querySelector('.stableRight table') : null;
-    const originalTable = getOriginalTable();
-
-    if(leftTable && rightTable){
-      const leftHeaders = Array.from(leftTable.querySelectorAll('thead th')).map(th => th.innerText.replace(/\s+/g,' ').trim());
-      const rightHeaders = Array.from(rightTable.querySelectorAll('thead th')).map(th => th.innerText.replace(/\s+/g,' ').trim());
-      const headers = leftHeaders.concat(rightHeaders);
-      const leftRows = Array.from(leftTable.querySelectorAll('tbody tr'));
-      const rightRows = Array.from(rightTable.querySelectorAll('tbody tr'));
-      return rightRows.map(function(r, idx){
-        const cells = Array.from((leftRows[idx] ? leftRows[idx].children : [])).concat(Array.from(r.children)).map(function(td){
-          const img = td.querySelector('img');
-          if(img) return img.src || img.getAttribute('src') || '';
-          return td.innerText.replace(/\s+/g,' ').trim();
-        });
-        const obj = {};
-        headers.forEach(function(h,i){ obj[h || ('Columna '+(i+1))] = cells[i] || ''; });
-        return obj;
-      }).filter(r => Object.values(r).some(v => String(v).trim() !== ''));
-    }
-
-    if(!originalTable) return [];
-    const headers = Array.from(originalTable.querySelectorAll('thead th')).map(th => th.innerText.replace(/\s+/g,' ').trim());
-    return Array.from(originalTable.querySelectorAll('tbody tr')).map(tr => {
-      const cells = Array.from(tr.children).map(td => {
-        const img = td.querySelector('img');
-        if(img) return img.src || img.getAttribute('src') || '';
-        return td.innerText.replace(/\s+/g,' ').trim();
-      });
-      const obj = {};
-      headers.forEach((h,i)=> obj[h || ('Columna ' + (i+1))] = cells[i] || '');
-      return obj;
-    }).filter(r => Object.values(r).some(v => String(v).trim() !== ''));
-  }
-
-  window.downloadProductsExcel = function(){
-    const rows = tableRowsForDownload();
-    if(!rows.length){
-      alert('No hay información de productos para descargar.');
-      return;
-    }
-    if(window.XLSX){
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(rows);
-      XLSX.utils.book_append_sheet(wb, ws, 'Productos');
-      XLSX.writeFile(wb, 'productos_perry_ellis_filtrado.xlsx');
-      return;
-    }
-    const headers = Object.keys(rows[0]);
-    const csv = [headers.join(','), ...rows.map(row => headers.map(h => `"${String(row[h] ?? '').replace(/"/g,'""')}"`).join(','))].join('\n');
-    const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'productos_perry_ellis_filtrado.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  function bindDownload(){
-    const btn = document.getElementById('downloadProductsExcel');
-    if(btn){
-      btn.onclick = function(e){ e.preventDefault(); window.downloadProductsExcel(); };
-    }
-  }
-
-  function removeResizeHandles(){
-    const tab = document.querySelector('#productosTab');
+  function stabilizeProductTable(){
+    const tab=document.getElementById('productosTab');
     if(!tab) return;
-    tab.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(el => el.remove());
-  }
-
-  function scheduleBuild(force){
-    clearTimeout(rebuildTimer);
-    rebuildTimer = setTimeout(function(){
-      cleanStatus();
-      ensureDownloadButton();
-      bindDownload();
-      removeResizeHandles();
-      buildStableProductsGrid(!!force);
-    }, 80);
-  }
-
-  function observeOriginalOnly(){
-    if(originalObserver) originalObserver.disconnect();
-    const originalWrap = getOriginalWrap();
-    if(!originalWrap || !window.MutationObserver) return;
-    originalObserver = new MutationObserver(function(mutations){
-      if(isBuilding) return;
-      const changedOriginal = mutations.some(m => originalWrap.contains(m.target));
-      if(changedOriginal) scheduleBuild(true);
+    const grid=tab.querySelector('.stableProductsGrid');
+    if(grid) grid.style.display='none';
+    const wrap=tab.querySelector('.productTableWrap');
+    if(wrap){
+      wrap.classList.remove('originalHidden');
+      wrap.style.display='block';
+      wrap.style.overflow='auto';
+      wrap.style.scrollBehavior='auto';
+    }
+    const table=tab.querySelector('#productTable');
+    if(!table) return;
+    table.classList.remove('resizing');
+    table.style.setProperty('--sticky-col-1','110px');
+    table.style.setProperty('--sticky-col-2','165px');
+    table.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(el=>el.remove());
+    table.querySelectorAll('img.productImg').forEach(img=>{
+      img.loading='eager';
+      img.decoding='async';
+      img.style.pointerEvents='auto';
+      img.style.cursor='zoom-in';
     });
-    originalObserver.observe(originalWrap, {childList:true, subtree:true});
   }
 
-  function init(){
-    cleanStatus();
-    ensureDownloadButton();
-    bindDownload();
-    removeResizeHandles();
-    buildStableProductsGrid(true);
-    observeOriginalOnly();
+  const oldRender=window.renderProductsTable;
+  if(typeof oldRender==='function' && !oldRender.__v113Wrapped){
+    window.renderProductsTable=function(){
+      const wrap=document.querySelector('#productosTab .productTableWrap');
+      const sx=wrap?wrap.scrollLeft:0;
+      const sy=wrap?wrap.scrollTop:0;
+      const out=oldRender.apply(this, arguments);
+      stabilizeProductTable();
+      if(wrap){wrap.scrollLeft=sx;wrap.scrollTop=sy;}
+      return out;
+    };
+    window.renderProductsTable.__v113Wrapped=true;
   }
 
-  document.addEventListener('DOMContentLoaded', init);
-  window.addEventListener('load', init);
-  document.addEventListener('click', function(){
-    setTimeout(function(){ scheduleBuild(false); }, 120);
+  document.addEventListener('DOMContentLoaded', stabilizeProductTable);
+  window.addEventListener('load', stabilizeProductTable);
+  document.addEventListener('click', function(e){
+    if(e.target && e.target.closest && e.target.closest('#productosTab .tabBtn,#productosTab th,#productosTab .productImg,#downloadProductsExcel,#clearProductFilters')){
+      setTimeout(stabilizeProductTable,0);
+    }
   }, true);
-  document.addEventListener('input', function(){ scheduleBuild(true); }, true);
-  document.addEventListener('change', function(){ scheduleBuild(true); }, true);
 })();
 </script>
-
 </body>
 </html>
