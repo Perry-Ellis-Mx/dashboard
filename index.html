@@ -1913,6 +1913,208 @@
   transition:transform .18s ease !important;
 }
 
+
+/* V109 - Productos estable real: freeze sin parpadeo + botón junto al buscador */
+#status{
+  display:none !important;
+}
+#status *{
+  display:none !important;
+}
+#productosTab .productsHead{
+  display:flex !important;
+  align-items:flex-start !important;
+  justify-content:space-between !important;
+  gap:16px !important;
+  width:100% !important;
+}
+#productosTab .productsTitle{
+  flex:1 1 auto !important;
+  max-width:none !important;
+}
+#productosTab .downloadProductsTop,
+#productosTab .downloadProductsRight{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  flex:0 0 auto !important;
+  margin:0 !important;
+}
+#downloadProductsExcel{
+  background:#000 !important;
+  color:#fff !important;
+  border-color:#000 !important;
+  border-radius:999px !important;
+  height:38px !important;
+  padding:0 16px !important;
+  white-space:nowrap !important;
+}
+#productosTab .productTable,
+#productosTab .productTable *,
+#productosTab .productTable *::before,
+#productosTab .productTable *::after{
+  transition:none !important;
+  animation:none !important;
+  transform:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+  will-change:auto !important;
+}
+#productosTab .colResizeHandle,
+#productosTab .colResizer,
+#productosTab [class*="Resize"],
+#productosTab [class*="resize"]{
+  display:none !important;
+  pointer-events:none !important;
+  width:0 !important;
+  height:0 !important;
+  opacity:0 !important;
+}
+#productosTab .productTableWrap{
+  overflow:auto !important;
+  overflow-anchor:none !important;
+  scroll-behavior:auto !important;
+  overscroll-behavior:contain !important;
+  -webkit-overflow-scrolling:auto !important;
+  transform:none !important;
+  contain:none !important;
+  isolation:isolate !important;
+  position:relative !important;
+  background:#fff !important;
+}
+#productosTab .productTable{
+  border-collapse:separate !important;
+  border-spacing:0 !important;
+  table-layout:fixed !important;
+  width:max-content !important;
+  min-width:2100px !important;
+  background:#fff !important;
+}
+#productosTab .productTable th,
+#productosTab .productTable td{
+  background:#fff !important;
+  color:#111 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+  border-radius:0 !important;
+}
+#productosTab .productTable tr:hover,
+#productosTab .productTable tr:hover td,
+#productosTab .productTable tbody tr:hover,
+#productosTab .productTable tbody tr:hover td,
+#productosTab .productTable td:hover,
+#productosTab .productTable th:hover{
+  background:#fff !important;
+  color:#111 !important;
+  transform:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+  border-radius:0 !important;
+  outline:none !important;
+}
+#productosTab .productTable thead th,
+#productosTab .productTable thead th:hover{
+  position:sticky !important;
+  top:0 !important;
+  background:#000 !important;
+  color:#fff !important;
+  z-index:300 !important;
+}
+#productosTab .productTable tfoot td{
+  position:static !important;
+  bottom:auto !important;
+  z-index:auto !important;
+  background:#fff !important;
+}
+#productosTab .productTable th:nth-child(1),
+#productosTab .productTable td:nth-child(1){
+  position:sticky !important;
+  left:0 !important;
+  width:110px !important;
+  min-width:110px !important;
+  max-width:110px !important;
+  background:#fff !important;
+  z-index:260 !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+#productosTab .productTable th:nth-child(2),
+#productosTab .productTable td:nth-child(2){
+  position:sticky !important;
+  left:110px !important;
+  width:165px !important;
+  min-width:165px !important;
+  max-width:165px !important;
+  background:#fff !important;
+  z-index:255 !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+#productosTab .productTable thead th:nth-child(1),
+#productosTab .productTable thead th:nth-child(1):hover{
+  position:sticky !important;
+  top:0 !important;
+  left:0 !important;
+  background:#000 !important;
+  color:#fff !important;
+  z-index:500 !important;
+}
+#productosTab .productTable thead th:nth-child(2),
+#productosTab .productTable thead th:nth-child(2):hover{
+  position:sticky !important;
+  top:0 !important;
+  left:110px !important;
+  background:#000 !important;
+  color:#fff !important;
+  z-index:499 !important;
+}
+#productosTab .productTable td:nth-child(1):hover{
+  position:sticky !important;
+  left:0 !important;
+  background:#fff !important;
+  z-index:260 !important;
+}
+#productosTab .productTable td:nth-child(2):hover{
+  position:sticky !important;
+  left:110px !important;
+  background:#fff !important;
+  z-index:255 !important;
+}
+#productosTab .productTable td:nth-child(3):hover,
+#productosTab .productTable td:nth-child(4):hover,
+#productosTab .productTable td:nth-child(5):hover,
+#productosTab .productTable td:nth-child(6):hover{
+  position:relative !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  min-width:0 !important;
+  max-width:none !important;
+  padding:13px 11px !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+#productosTab .productImg,
+#productosTab .productImg:hover,
+#productosTab .productImg:focus,
+#productosTab .productImg:active{
+  cursor:zoom-in !important;
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+#productLightbox img{
+  transition:transform .18s ease !important;
+}
+
 </style>
 </head>
 <body>
@@ -3358,6 +3560,146 @@ function updateProductStickyOffsets(){
   window.addEventListener('load', ()=>{
     removeResizeHandles();
     bindDownload();
+  });
+})();
+</script>
+
+
+<script>
+/* V109 - mover botón, limpiar resize y descargar productos filtrados/todos */
+(function(){
+  function cleanStatusText(){
+    const st = document.getElementById('status');
+    if(st) st.innerHTML = '';
+  }
+
+  function removeResizeHandles(){
+    const tab = document.querySelector('#productosTab');
+    if(!tab) return;
+    tab.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(function(el){ el.remove(); });
+    const table = tab.querySelector('.productTable');
+    if(table){
+      table.classList.remove('resizing');
+      table.style.setProperty('--sticky-col-1','110px');
+      table.style.setProperty('--sticky-col-2','165px');
+    }
+  }
+
+  function moveDownloadButton(){
+    const btn = document.getElementById('downloadProductsExcel');
+    if(!btn) return;
+    let holder = document.querySelector('#productosTab .downloadProductsRight');
+    const head = document.querySelector('#productosTab .productsHead');
+    if(head && !holder){
+      holder = document.createElement('div');
+      holder.className = 'downloadProductsRight';
+      head.appendChild(holder);
+    }
+    if(holder && btn.parentElement !== holder){
+      holder.appendChild(btn);
+    }
+  }
+
+  function tableToRows(){
+    const table = document.querySelector('#productosTab .productTable');
+    if(!table) return [];
+    const headers = [...table.querySelectorAll('thead th')].map(th => th.innerText.replace(/\s+/g,' ').trim());
+    return [...table.querySelectorAll('tbody tr')].map(tr => {
+      const cells = [...tr.children].map(td => {
+        const img = td.querySelector('img');
+        if(img) return img.src || '';
+        return td.innerText.replace(/\s+/g,' ').trim();
+      });
+      const obj = {};
+      headers.forEach((h,i)=> obj[h || ('Columna ' + (i+1))] = cells[i] || '');
+      return obj;
+    }).filter(r => Object.values(r).some(v => String(v).trim() !== ''));
+  }
+
+  function getRowsForDownload(){
+    if(typeof filteredProducts === 'function'){
+      try{
+        const rows = filteredProducts();
+        if(Array.isArray(rows) && rows.length){
+          return rows.map(r => ({
+            Imagen: r.imagen || r.Imagen || '',
+            Modelo: r.modelo || r.Modelo || '',
+            Descripción: r.descripcion || r.Descripción || r.Descripcion || '',
+            Categoría: r.categoria || r.Categoría || r.Categoria || '',
+            Estilo: r.estilo || r.Estilo || '',
+            Proveedor: r.proveedor || r.Proveedor || '',
+            'Precio Venta': r.precioVenta ?? r['Precio Venta'] ?? '',
+            'Pzas Compradas': r.pzasCompradas ?? r['Pzas Compradas'] ?? '',
+            '$ Comprado': r.comprado ?? r['$ Comprado'] ?? '',
+            'Pzas Vendidas': r.pzasVendidas ?? r['Pzas Vendidas'] ?? '',
+            '$ Vendido': r.vendido ?? r['$ Vendido'] ?? '',
+            'Sell Through': r.sell !== undefined ? ((Number(r.sell)||0)*100).toFixed(1)+'%' : (r['Sell Through'] || ''),
+            'Inventario Piezas': r.invPzs ?? r['Inventario Piezas'] ?? r.Inventario ?? '',
+            '$ Inventario': r.invDinero ?? r['$ Inventario'] ?? '',
+            'Meses Publicación': r.mesesPub ?? r['Meses Publicación'] ?? '',
+            Tipo: r.tipo || r.Tipo || ''
+          }));
+        }
+      }catch(e){}
+    }
+    return tableToRows();
+  }
+
+  window.downloadProductsExcel = function(){
+    const rows = getRowsForDownload();
+    if(!rows.length){
+      alert('No hay información de productos para descargar.');
+      return;
+    }
+    if(window.XLSX){
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(rows);
+      XLSX.utils.book_append_sheet(wb, ws, 'Productos');
+      XLSX.writeFile(wb, 'productos_perry_ellis_filtrado.xlsx');
+      return;
+    }
+    const headers = Object.keys(rows[0]);
+    const csv = [
+      headers.join(','),
+      ...rows.map(row => headers.map(h => `"${String(row[h] ?? '').replace(/"/g,'""')}"`).join(','))
+    ].join('\\n');
+    const blob = new Blob(['\\ufeff' + csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'productos_perry_ellis_filtrado.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  function bindDownload(){
+    const btn = document.getElementById('downloadProductsExcel');
+    if(btn && !btn.dataset.bound){
+      btn.dataset.bound = 'true';
+      btn.addEventListener('click', window.downloadProductsExcel);
+    }
+  }
+
+  function init(){
+    cleanStatusText();
+    removeResizeHandles();
+    moveDownloadButton();
+    bindDownload();
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+  window.addEventListener('load', init);
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const tab = document.querySelector('#productosTab');
+    if(tab && window.MutationObserver){
+      const observer = new MutationObserver(function(){
+        requestAnimationFrame(init);
+      });
+      observer.observe(tab, {childList:true, subtree:true});
+    }
   });
 })();
 </script>
