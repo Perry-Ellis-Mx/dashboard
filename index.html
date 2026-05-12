@@ -1642,6 +1642,155 @@
   z-index:auto !important;
 }
 
+
+/* V102 - Productos 100% estable: sin movimiento visual, con freeze y zoom */
+#productosTab,
+#productosTab *,
+#productosTab *::before,
+#productosTab *::after{
+  transition:none !important;
+  animation:none !important;
+  transform:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+/* Eliminar cualquier resize/arrastre de columnas */
+#productosTab .colResizeHandle,
+#productosTab .colResizer,
+#productosTab [class*="Resize"],
+#productosTab [class*="resize"]{
+  display:none !important;
+  pointer-events:none !important;
+}
+
+/* Tabla sin efectos al hover */
+#productosTab .productTableWrap,
+#productosTab .productTable,
+#productosTab .productTable thead,
+#productosTab .productTable tbody,
+#productosTab .productTable tr,
+#productosTab .productTable th,
+#productosTab .productTable td{
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+/* Nada cambia al pasar cursor */
+#productosTab .productTable tr:hover,
+#productosTab .productTable th:hover,
+#productosTab .productTable td:hover,
+#productosTab .productTable tr:hover th,
+#productosTab .productTable tr:hover td,
+#productosTab .productTable tbody tr:hover td,
+#productosTab .productTable tbody td:hover{
+  background:#ffffff !important;
+  color:inherit !important;
+  transform:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+  outline:none !important;
+  border-radius:0 !important;
+  cursor:default !important;
+}
+
+/* Header siempre negro aunque pases el cursor */
+#productosTab .productTable thead th,
+#productosTab .productTable thead th:hover{
+  background:#000000 !important;
+  color:#ffffff !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+/* Freeze estable en Imagen */
+#productosTab .productTable th:nth-child(1),
+#productosTab .productTable td:nth-child(1){
+  position:sticky !important;
+  left:0 !important;
+  width:110px !important;
+  min-width:110px !important;
+  max-width:110px !important;
+  z-index:30 !important;
+  background:#ffffff !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+/* Freeze estable en Modelo */
+#productosTab .productTable th:nth-child(2),
+#productosTab .productTable td:nth-child(2){
+  position:sticky !important;
+  left:110px !important;
+  width:165px !important;
+  min-width:165px !important;
+  max-width:165px !important;
+  z-index:29 !important;
+  background:#ffffff !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+/* Headers congelados */
+#productosTab .productTable thead th:nth-child(1),
+#productosTab .productTable thead th:nth-child(2){
+  background:#000000 !important;
+  color:#ffffff !important;
+  z-index:60 !important;
+}
+
+/* Mantener imagen clickeable pero sin movimiento */
+#productosTab .productImg,
+#productosTab .productImg:hover,
+#productosTab .productImg:focus,
+#productosTab .productImg:active{
+  cursor:zoom-in !important;
+  transform:none !important;
+  transition:none !important;
+  animation:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+/* Scroll estable */
+#productosTab .productTableWrap{
+  overflow:auto !important;
+  scroll-behavior:auto !important;
+  overscroll-behavior:contain !important;
+  will-change:auto !important;
+}
+
+/* Evitar que celdas largas se expandan en hover */
+#productosTab .productTable td:hover,
+#productosTab .productTable td:nth-child(3):hover,
+#productosTab .productTable td:nth-child(4):hover,
+#productosTab .productTable td:nth-child(5):hover,
+#productosTab .productTable td:nth-child(6):hover{
+  position:static !important;
+  min-width:0 !important;
+  max-width:none !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  padding:inherit !important;
+  border-radius:0 !important;
+}
+
+/* Reaplicar sticky después de neutralizar hover */
+#productosTab .productTable td:nth-child(1):hover,
+#productosTab .productTable th:nth-child(1):hover{
+  position:sticky !important;
+  left:0 !important;
+}
+#productosTab .productTable td:nth-child(2):hover,
+#productosTab .productTable th:nth-child(2):hover{
+  position:sticky !important;
+  left:110px !important;
+}
+
 </style>
 </head>
 <body>
@@ -2896,5 +3045,15 @@ function updateProductStickyOffsets(){
 }
 
 </script>
+
+<script>
+/* V102 - Remover físicamente manejadores de resize si existen */
+window.addEventListener('load', function(){
+  document.querySelectorAll('#productosTab .colResizeHandle, #productosTab .colResizer, #productosTab [class*="Resize"], #productosTab [class*="resize"]').forEach(function(el){
+    el.remove();
+  });
+});
+</script>
+
 </body>
 </html>
