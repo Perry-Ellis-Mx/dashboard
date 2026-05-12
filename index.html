@@ -1724,6 +1724,195 @@
   transition:transform .18s ease !important;
 }
 
+
+/* V108 DEFINITIVO - Productos sin movimiento ni reacción al cursor */
+#productosTab .downloadProductsTop{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  margin:0 0 12px 0 !important;
+}
+#productosTab .productFilters .actions,
+#productosTab .productActions{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  gap:10px !important;
+  grid-column:1/-1 !important;
+}
+#downloadProductsExcel{
+  background:#000 !important;
+  color:#fff !important;
+  border-color:#000 !important;
+}
+#productosTab,
+#productosTab *,
+#productosTab *:hover,
+#productosTab *:focus,
+#productosTab *:active,
+#productosTab *::before,
+#productosTab *::after{
+  transition-property:none !important;
+  transition-duration:0s !important;
+  animation:none !important;
+  transform:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+#productosTab .colResizeHandle,
+#productosTab .colResizer,
+#productosTab [class*="Resize"],
+#productosTab [class*="resize"]{
+  display:none !important;
+  pointer-events:none !important;
+  width:0 !important;
+  height:0 !important;
+  opacity:0 !important;
+}
+#productosTab .productTableWrap{
+  overflow:auto !important;
+  overflow-anchor:none !important;
+  scroll-behavior:auto !important;
+  overscroll-behavior:contain !important;
+  -webkit-overflow-scrolling:auto !important;
+  transform:none !important;
+  will-change:auto !important;
+  contain:layout paint !important;
+}
+#productosTab .productTable{
+  table-layout:fixed !important;
+  width:max-content !important;
+  min-width:2100px !important;
+  border-collapse:separate !important;
+  border-spacing:0 !important;
+  transform:none !important;
+  will-change:auto !important;
+}
+#productosTab .productTable th,
+#productosTab .productTable td{
+  transform:none !important;
+  will-change:auto !important;
+  background:#fff !important;
+  color:#111 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+}
+#productosTab .productTable tr:hover,
+#productosTab .productTable tbody tr:hover,
+#productosTab .productTable tr:hover td,
+#productosTab .productTable tbody tr:hover td,
+#productosTab .productTable td:hover,
+#productosTab .productTable th:hover,
+#productosTab .productTable tbody td:hover{
+  background:#fff !important;
+  color:#111 !important;
+  transform:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+  outline:none !important;
+  border-radius:0 !important;
+  min-width:initial !important;
+  max-width:initial !important;
+}
+#productosTab .productTable thead th,
+#productosTab .productTable thead th:hover{
+  position:sticky !important;
+  top:0 !important;
+  background:#000 !important;
+  color:#fff !important;
+  z-index:50 !important;
+}
+#productosTab .productTable tfoot td,
+#productosTab .productTable tfoot td:hover{
+  position:static !important;
+  bottom:auto !important;
+  z-index:auto !important;
+  background:#fff !important;
+  color:#111 !important;
+}
+#productosTab .productTable th:nth-child(1),
+#productosTab .productTable td:nth-child(1){
+  position:sticky !important;
+  left:0 !important;
+  width:110px !important;
+  min-width:110px !important;
+  max-width:110px !important;
+  background:#fff !important;
+  z-index:80 !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+#productosTab .productTable th:nth-child(2),
+#productosTab .productTable td:nth-child(2){
+  position:sticky !important;
+  left:110px !important;
+  width:165px !important;
+  min-width:165px !important;
+  max-width:165px !important;
+  background:#fff !important;
+  z-index:79 !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+#productosTab .productTable thead th:nth-child(1),
+#productosTab .productTable thead th:nth-child(1):hover{
+  position:sticky !important;
+  left:0 !important;
+  top:0 !important;
+  background:#000 !important;
+  color:#fff !important;
+  z-index:120 !important;
+}
+#productosTab .productTable thead th:nth-child(2),
+#productosTab .productTable thead th:nth-child(2):hover{
+  position:sticky !important;
+  left:110px !important;
+  top:0 !important;
+  background:#000 !important;
+  color:#fff !important;
+  z-index:119 !important;
+}
+#productosTab .productTable td:nth-child(1):hover{
+  position:sticky !important;
+  left:0 !important;
+  background:#fff !important;
+  z-index:80 !important;
+}
+#productosTab .productTable td:nth-child(2):hover{
+  position:sticky !important;
+  left:110px !important;
+  background:#fff !important;
+  z-index:79 !important;
+}
+#productosTab .productTable td:nth-child(3):hover,
+#productosTab .productTable td:nth-child(4):hover,
+#productosTab .productTable td:nth-child(5):hover,
+#productosTab .productTable td:nth-child(6):hover{
+  position:relative !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  padding:13px 11px !important;
+  border:0 !important;
+  min-width:0 !important;
+  max-width:none !important;
+}
+#productosTab .productImg,
+#productosTab .productImg:hover,
+#productosTab .productImg:focus,
+#productosTab .productImg:active{
+  cursor:zoom-in !important;
+  transform:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+#productLightbox img{
+  transition:transform .18s ease !important;
+}
+
 </style>
 </head>
 <body>
@@ -3054,6 +3243,118 @@ function updateProductStickyOffsets(){
     }
   });
 
+  window.addEventListener('load', ()=>{
+    removeResizeHandles();
+    bindDownload();
+  });
+})();
+</script>
+
+
+<script>
+/* V108 - Descarga robusta + eliminación definitiva de resize */
+(function(){
+  function removeResizeHandles(){
+    const tab=document.querySelector('#productosTab');
+    if(!tab) return;
+    tab.querySelectorAll('.colResizeHandle,.colResizer,[class*="Resize"],[class*="resize"]').forEach(el=>el.remove());
+    const table=tab.querySelector('.productTable');
+    if(table){
+      table.classList.remove('resizing');
+      table.style.setProperty('--sticky-col-1','110px');
+      table.style.setProperty('--sticky-col-2','165px');
+    }
+  }
+
+  function tableToRows(){
+    const table=document.querySelector('#productosTab .productTable');
+    if(!table) return [];
+    const headers=[...table.querySelectorAll('thead th')].map(th=>th.innerText.replace(/\s+/g,' ').trim());
+    return [...table.querySelectorAll('tbody tr')].map(tr=>{
+      const cells=[...tr.children].map(td=>{
+        const img=td.querySelector('img');
+        if(img) return img.src || '';
+        return td.innerText.replace(/\s+/g,' ').trim();
+      });
+      const obj={};
+      headers.forEach((h,i)=>obj[h||('Columna '+(i+1))]=cells[i]||'');
+      return obj;
+    }).filter(r=>Object.values(r).some(v=>String(v).trim()!==''));
+  }
+
+  function getDataRows(){
+    if(typeof filteredProducts==='function'){
+      try{
+        const rows=filteredProducts();
+        if(Array.isArray(rows) && rows.length) return rows.map(r=>({
+          Imagen:r.imagen||r.Imagen||'',
+          Modelo:r.modelo||r.Modelo||'',
+          Descripción:r.descripcion||r.Descripción||r.Descripcion||'',
+          Categoría:r.categoria||r.Categoría||r.Categoria||'',
+          Estilo:r.estilo||r.Estilo||'',
+          Proveedor:r.proveedor||r.Proveedor||'',
+          'Precio Venta':r.precioVenta??r['Precio Venta']??'',
+          'Pzas Compradas':r.pzasCompradas??r['Pzas Compradas']??'',
+          '$ Comprado':r.comprado??r['$ Comprado']??'',
+          'Pzas Vendidas':r.pzasVendidas??r['Pzas Vendidas']??'',
+          '$ Vendido':r.vendido??r['$ Vendido']??'',
+          'Sell Through':r.sell!==undefined?((Number(r.sell)||0)*100).toFixed(1)+'%':(r['Sell Through']||''),
+          'Inventario Piezas':r.invPzs??r['Inventario Piezas']??r.Inventario??'',
+          '$ Inventario':r.invDinero??r['$ Inventario']??'',
+          'Meses Publicación':r.mesesPub??r['Meses Publicación']??'',
+          Tipo:r.tipo||r.Tipo||''
+        }));
+      }catch(e){}
+    }
+    return tableToRows();
+  }
+
+  window.downloadProductsExcel=function(){
+    const rows=getDataRows();
+    if(!rows.length){
+      alert('No hay información de productos para descargar.');
+      return;
+    }
+    if(window.XLSX){
+      const wb=XLSX.utils.book_new();
+      const ws=XLSX.utils.json_to_sheet(rows);
+      XLSX.utils.book_append_sheet(wb,ws,'Productos');
+      XLSX.writeFile(wb,'productos_perry_ellis_filtrado.xlsx');
+      return;
+    }
+    const headers=Object.keys(rows[0]);
+    const csv=[
+      headers.join(','),
+      ...rows.map(row=>headers.map(h=>`"${String(row[h]??'').replace(/"/g,'""')}"`).join(','))
+    ].join('\n');
+    const blob=new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8;'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='productos_perry_ellis_filtrado.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  function bindDownload(){
+    const btn=document.getElementById('downloadProductsExcel');
+    if(btn && !btn.dataset.bound){
+      btn.dataset.bound='true';
+      btn.addEventListener('click', window.downloadProductsExcel);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    removeResizeHandles();
+    bindDownload();
+    const target=document.querySelector('#productosTab');
+    if(target && window.MutationObserver){
+      const obs=new MutationObserver(()=>requestAnimationFrame(removeResizeHandles));
+      obs.observe(target,{childList:true,subtree:true});
+    }
+  });
   window.addEventListener('load', ()=>{
     removeResizeHandles();
     bindDownload();
