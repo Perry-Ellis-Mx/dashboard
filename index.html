@@ -5181,96 +5181,274 @@ function updateProductStickyOffsets(){
 
 
 
-<style id="v123-productos-info-top-right">
-#productosTab .productsHead{
+
+
+
+
+
+<style id="v124-productos-layout-premium">
+/* V124 - Productos layout superior más limpio */
+.tabs{
+  position:relative !important;
   display:flex !important;
-  justify-content:space-between !important;
-  align-items:flex-start !important;
-  gap:18px !important;
+  align-items:center !important;
+  gap:8px !important;
 }
-#productosTab .productosInfoTopRight{
-  flex:0 0 auto;
-  max-width:420px;
-  margin-left:auto;
-  padding:11px 14px;
-  border:1px solid #e4e4e4;
-  border-radius:18px;
-  background:#ffffff;
-  box-shadow:0 12px 28px rgba(0,0,0,.04);
-  text-align:right;
-  color:#111;
-}
-#productosTab .productosInfoTopRight .infoEyebrow{
-  font-size:9.5px;
-  color:#777;
-  text-transform:uppercase;
-  letter-spacing:.13em;
-  font-weight:800;
-  margin-bottom:5px;
-}
-#productosTab .productosInfoTopRight .infoMain{
-  font-size:12px;
-  line-height:1.32;
-  color:#111;
-  font-weight:650;
-}
-#productosTab .productosInfoTopRight .infoDate{
-  display:inline-flex;
-  justify-content:center;
+
+#productosInfoTopRight{
+  margin-left:auto !important;
+  padding:9px 14px !important;
+  border:1px solid #e5e5e5 !important;
+  border-radius:999px !important;
+  background:#fff !important;
+  box-shadow:0 10px 24px rgba(0,0,0,.035) !important;
+  color:#111 !important;
+  display:none;
   align-items:center;
-  margin-top:7px;
-  padding:5px 9px;
-  border-radius:999px;
-  background:#000;
-  color:#fff;
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.02em;
+  gap:10px;
+  white-space:nowrap;
 }
-@media(max-width:900px){
-  #productosTab .productsHead{
-    flex-direction:column !important;
+
+body.productos-active #productosInfoTopRight{
+  display:inline-flex !important;
+}
+
+#productosInfoTopRight .infoEyebrow{
+  font-size:9.5px !important;
+  color:#777 !important;
+  text-transform:uppercase !important;
+  letter-spacing:.12em !important;
+  font-weight:800 !important;
+}
+
+#productosInfoTopRight .infoMain{
+  font-size:11px !important;
+  color:#111 !important;
+  font-weight:700 !important;
+}
+
+#productosInfoTopRight .infoDate{
+  padding:5px 9px !important;
+  border-radius:999px !important;
+  background:#000 !important;
+  color:#fff !important;
+  font-size:10.5px !important;
+  font-weight:800 !important;
+}
+
+/* Encabezado de productos más compacto */
+#productosTab .productsHead{
+  display:block !important;
+  margin-bottom:12px !important;
+}
+
+#productosTab .productSearchBox{
+  max-width:520px !important;
+  width:100% !important;
+}
+
+#productSearch::placeholder{
+  color:transparent !important;
+}
+
+/* Barra de filtros con descarga alineada a la derecha */
+#productosTab .productFilters{
+  display:grid !important;
+  grid-template-columns:repeat(9,minmax(130px,1fr)) auto !important;
+  align-items:center !important;
+  gap:10px !important;
+}
+
+#productosTab .productFilters .actions{
+  grid-column:auto !important;
+  justify-content:flex-end !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+#productosTab #downloadProductsExcel{
+  white-space:nowrap !important;
+  height:36px !important;
+  padding:0 16px !important;
+  border-radius:999px !important;
+  font-size:11px !important;
+}
+
+#productosTab #clearProductFilters{
+  position:absolute !important;
+  right:14px !important;
+  bottom:14px !important;
+  height:36px !important;
+  padding:0 16px !important;
+  border-radius:999px !important;
+  font-size:11px !important;
+}
+
+#productosTab .productFilters{
+  position:relative !important;
+  padding-bottom:58px !important;
+}
+
+/* Eliminar espacios raros de botones anteriores */
+#productosTab .productControls{
+  display:none !important;
+}
+
+@media(max-width:1300px){
+  #productosTab .productFilters{
+    grid-template-columns:repeat(4,minmax(140px,1fr)) !important;
   }
-  #productosTab .productosInfoTopRight{
-    width:100%;
-    max-width:none;
-    text-align:left;
-    margin-left:0;
+  #productosTab .productFilters .actions{
+    grid-column:1/-1 !important;
+    justify-content:flex-start !important;
+  }
+  #productosInfoTopRight{
+    border-radius:18px !important;
+    white-space:normal !important;
+    align-items:flex-start !important;
+  }
+}
+@media(max-width:760px){
+  .tabs{
+    flex-wrap:wrap !important;
+  }
+  #productosInfoTopRight{
+    width:100% !important;
+    margin-left:0 !important;
+  }
+  #productosTab .productFilters{
+    grid-template-columns:1fr !important;
   }
 }
 </style>
 
-<script id="v123-productos-info-top-right-script">
+<script id="v124-productos-layout-premium-script">
 (function(){
-  function ensureProductosInfoTopRight(){
-    const tab = document.querySelector('#productosTab');
-    if(!tab) return;
+  function normalizeTextV124(v){
+    return String(v ?? '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase()
+      .trim();
+  }
 
-    const old = document.getElementById('productosOnlyInfo');
-    if(old) old.remove();
+  function updateActiveTabClassV124(){
+    const productosActive = !!document.querySelector('#productosTab.active');
+    document.body.classList.toggle('productos-active', productosActive);
+  }
 
-    const head = tab.querySelector('.productsHead');
-    if(!head) return;
+  function addInfoToTabsV124(){
+    const tabs = document.querySelector('.tabs');
+    if(!tabs) return;
 
-    let box = document.getElementById('productosInfoTopRight');
-    if(!box){
-      box = document.createElement('div');
-      box.id = 'productosInfoTopRight';
-      box.className = 'productosInfoTopRight';
-      head.appendChild(box);
+    let info = document.getElementById('productosInfoTopRight');
+    if(!info){
+      info = document.createElement('div');
+      info.id = 'productosInfoTopRight';
+      tabs.appendChild(info);
     }
 
-    box.innerHTML = `
-      <div class="infoEyebrow">Dato acumulado histórico</div>
-      <div class="infoMain">Todos los años hasta la última actualización registrada.</div>
-      <div class="infoDate">Última venta: 12-mayo-2026</div>
+    info.innerHTML = `
+      <span class="infoEyebrow">Dato acumulado histórico</span>
+      <span class="infoMain">Todos los años hasta la última actualización registrada.</span>
+      <span class="infoDate">Última venta: 12-mayo-2026</span>
     `;
   }
 
-  document.addEventListener('DOMContentLoaded', ensureProductosInfoTopRight);
-  window.addEventListener('load', ensureProductosInfoTopRight);
-  setTimeout(ensureProductosInfoTopRight, 300);
-  setTimeout(ensureProductosInfoTopRight, 1200);
+  function moveDownloadToFiltersV124(){
+    const filters = document.querySelector('#productosTab .productFilters');
+    const download = document.getElementById('downloadProductsExcel');
+    if(!filters || !download) return;
+
+    let actions = filters.querySelector('.actions');
+    if(!actions){
+      actions = document.createElement('div');
+      actions.className = 'actions productActions';
+      filters.appendChild(actions);
+    }
+
+    if(download.parentElement !== actions){
+      actions.appendChild(download);
+    }
+
+    download.textContent = 'Descargar Excel';
+
+    const clear = document.getElementById('clearProductFilters');
+    if(clear){
+      clear.textContent = 'Borrar Filtros';
+      if(clear.parentElement !== filters){
+        filters.appendChild(clear);
+      }
+    }
+  }
+
+  function fixSearchV124(){
+    const search = document.getElementById('productSearch');
+    if(!search) return;
+
+    search.setAttribute('placeholder','Buscar Modelo');
+    search.setAttribute('aria-label','Buscar Modelo');
+
+    if(search.__v124SearchFixed) return;
+    search.__v124SearchFixed = true;
+
+    search.addEventListener('input', function(){
+      const value = normalizeTextV124(search.value);
+
+      try{
+        if(typeof productSearchTerm !== 'undefined'){
+          productSearchTerm = value;
+        }
+      }catch(e){}
+
+      try{
+        if(window.productState){
+          window.productState.search = value;
+        }
+      }catch(e){}
+
+      if(typeof renderProducts === 'function'){
+        setTimeout(renderProducts, 0);
+      }
+      if(typeof renderProductTable === 'function'){
+        setTimeout(renderProductTable, 0);
+      }
+    }, true);
+  }
+
+  /* Refuerzo: filtrar solo por Modelo, Descripción, Categoría, Proveedor y Estilo si existe función global */
+  function patchProductFilterFunctionV124(){
+    if(window.__v124FilterPatched) return;
+    window.__v124FilterPatched = true;
+
+    window.v124ProductRowMatchesSearch = function(row, term){
+      if(!term) return true;
+      const keys = ['modelo','descripcion','descripción','categoria','categoría','proveedor','estilo'];
+      const text = keys.map(function(k){
+        return row && row[k] != null ? row[k] : '';
+      }).join(' ');
+      return normalizeTextV124(text).includes(normalizeTextV124(term));
+    };
+  }
+
+  function bootV124(){
+    addInfoToTabsV124();
+    updateActiveTabClassV124();
+    moveDownloadToFiltersV124();
+    fixSearchV124();
+    patchProductFilterFunctionV124();
+  }
+
+  document.addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('.tabBtn')){
+      setTimeout(updateActiveTabClassV124, 0);
+      setTimeout(bootV124, 50);
+    }
+  }, true);
+
+  document.addEventListener('DOMContentLoaded', bootV124);
+  window.addEventListener('load', bootV124);
+  setTimeout(bootV124, 300);
+  setTimeout(bootV124, 1200);
 })();
 </script>
 
