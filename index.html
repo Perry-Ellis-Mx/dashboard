@@ -5186,269 +5186,48 @@ function updateProductStickyOffsets(){
 
 
 
-<style id="v124-productos-layout-premium">
-/* V124 - Productos layout superior más limpio */
-.tabs{
-  position:relative !important;
-  display:flex !important;
-  align-items:center !important;
-  gap:8px !important;
-}
 
-#productosInfoTopRight{
-  margin-left:auto !important;
-  padding:9px 14px !important;
-  border:1px solid #e5e5e5 !important;
-  border-radius:999px !important;
-  background:#fff !important;
-  box-shadow:0 10px 24px rgba(0,0,0,.035) !important;
-  color:#111 !important;
-  display:none;
-  align-items:center;
-  gap:10px;
-  white-space:nowrap;
-}
 
-body.productos-active #productosInfoTopRight{
-  display:inline-flex !important;
-}
 
-#productosInfoTopRight .infoEyebrow{
-  font-size:9.5px !important;
-  color:#777 !important;
-  text-transform:uppercase !important;
-  letter-spacing:.12em !important;
-  font-weight:800 !important;
-}
 
-#productosInfoTopRight .infoMain{
-  font-size:11px !important;
-  color:#111 !important;
-  font-weight:700 !important;
-}
 
-#productosInfoTopRight .infoDate{
-  padding:5px 9px !important;
-  border-radius:999px !important;
-  background:#000 !important;
-  color:#fff !important;
-  font-size:10.5px !important;
-  font-weight:800 !important;
-}
-
-/* Encabezado de productos más compacto */
-#productosTab .productsHead{
-  display:block !important;
-  margin-bottom:12px !important;
-}
-
-#productosTab .productSearchBox{
-  max-width:520px !important;
-  width:100% !important;
-}
-
-#productSearch::placeholder{
-  color:transparent !important;
-}
-
-/* Barra de filtros con descarga alineada a la derecha */
-#productosTab .productFilters{
-  display:grid !important;
-  grid-template-columns:repeat(9,minmax(130px,1fr)) auto !important;
-  align-items:center !important;
-  gap:10px !important;
-}
-
-#productosTab .productFilters .actions{
-  grid-column:auto !important;
-  justify-content:flex-end !important;
+<style id="v125-remove-acumulado-clean">
+#productosInfoTopRight,
+#productosOnlyInfo,
+#headerAccumulatedInfo,
+.productosInfoTopRight,
+.productosOnlyInfo,
+.headerAccumulatedInfo{
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  width:0 !important;
+  height:0 !important;
+  max-width:0 !important;
+  max-height:0 !important;
   margin:0 !important;
   padding:0 !important;
-}
-
-#productosTab #downloadProductsExcel{
-  white-space:nowrap !important;
-  height:36px !important;
-  padding:0 16px !important;
-  border-radius:999px !important;
-  font-size:11px !important;
-}
-
-#productosTab #clearProductFilters{
-  position:absolute !important;
-  right:14px !important;
-  bottom:14px !important;
-  height:36px !important;
-  padding:0 16px !important;
-  border-radius:999px !important;
-  font-size:11px !important;
-}
-
-#productosTab .productFilters{
-  position:relative !important;
-  padding-bottom:58px !important;
-}
-
-/* Eliminar espacios raros de botones anteriores */
-#productosTab .productControls{
-  display:none !important;
-}
-
-@media(max-width:1300px){
-  #productosTab .productFilters{
-    grid-template-columns:repeat(4,minmax(140px,1fr)) !important;
-  }
-  #productosTab .productFilters .actions{
-    grid-column:1/-1 !important;
-    justify-content:flex-start !important;
-  }
-  #productosInfoTopRight{
-    border-radius:18px !important;
-    white-space:normal !important;
-    align-items:flex-start !important;
-  }
-}
-@media(max-width:760px){
-  .tabs{
-    flex-wrap:wrap !important;
-  }
-  #productosInfoTopRight{
-    width:100% !important;
-    margin-left:0 !important;
-  }
-  #productosTab .productFilters{
-    grid-template-columns:1fr !important;
-  }
+  border:0 !important;
+  box-shadow:none !important;
+  overflow:hidden !important;
 }
 </style>
-
-<script id="v124-productos-layout-premium-script">
+<script id="v125-remove-acumulado-clean-script">
 (function(){
-  function normalizeTextV124(v){
-    return String(v ?? '')
-      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-      .toLowerCase()
-      .trim();
+  function removeAccumulatedBlocks(){
+    ['productosInfoTopRight','productosOnlyInfo','headerAccumulatedInfo'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.remove();
+    });
+    document.querySelectorAll('.productosInfoTopRight,.productosOnlyInfo,.headerAccumulatedInfo').forEach(function(el){
+      el.remove();
+    });
   }
-
-  function updateActiveTabClassV124(){
-    const productosActive = !!document.querySelector('#productosTab.active');
-    document.body.classList.toggle('productos-active', productosActive);
-  }
-
-  function addInfoToTabsV124(){
-    const tabs = document.querySelector('.tabs');
-    if(!tabs) return;
-
-    let info = document.getElementById('productosInfoTopRight');
-    if(!info){
-      info = document.createElement('div');
-      info.id = 'productosInfoTopRight';
-      tabs.appendChild(info);
-    }
-
-    info.innerHTML = `
-      <span class="infoEyebrow">Dato acumulado histórico</span>
-      <span class="infoMain">Todos los años hasta la última actualización registrada.</span>
-      <span class="infoDate">Última venta: 12-mayo-2026</span>
-    `;
-  }
-
-  function moveDownloadToFiltersV124(){
-    const filters = document.querySelector('#productosTab .productFilters');
-    const download = document.getElementById('downloadProductsExcel');
-    if(!filters || !download) return;
-
-    let actions = filters.querySelector('.actions');
-    if(!actions){
-      actions = document.createElement('div');
-      actions.className = 'actions productActions';
-      filters.appendChild(actions);
-    }
-
-    if(download.parentElement !== actions){
-      actions.appendChild(download);
-    }
-
-    download.textContent = 'Descargar Excel';
-
-    const clear = document.getElementById('clearProductFilters');
-    if(clear){
-      clear.textContent = 'Borrar Filtros';
-      if(clear.parentElement !== filters){
-        filters.appendChild(clear);
-      }
-    }
-  }
-
-  function fixSearchV124(){
-    const search = document.getElementById('productSearch');
-    if(!search) return;
-
-    search.setAttribute('placeholder','Buscar Modelo');
-    search.setAttribute('aria-label','Buscar Modelo');
-
-    if(search.__v124SearchFixed) return;
-    search.__v124SearchFixed = true;
-
-    search.addEventListener('input', function(){
-      const value = normalizeTextV124(search.value);
-
-      try{
-        if(typeof productSearchTerm !== 'undefined'){
-          productSearchTerm = value;
-        }
-      }catch(e){}
-
-      try{
-        if(window.productState){
-          window.productState.search = value;
-        }
-      }catch(e){}
-
-      if(typeof renderProducts === 'function'){
-        setTimeout(renderProducts, 0);
-      }
-      if(typeof renderProductTable === 'function'){
-        setTimeout(renderProductTable, 0);
-      }
-    }, true);
-  }
-
-  /* Refuerzo: filtrar solo por Modelo, Descripción, Categoría, Proveedor y Estilo si existe función global */
-  function patchProductFilterFunctionV124(){
-    if(window.__v124FilterPatched) return;
-    window.__v124FilterPatched = true;
-
-    window.v124ProductRowMatchesSearch = function(row, term){
-      if(!term) return true;
-      const keys = ['modelo','descripcion','descripción','categoria','categoría','proveedor','estilo'];
-      const text = keys.map(function(k){
-        return row && row[k] != null ? row[k] : '';
-      }).join(' ');
-      return normalizeTextV124(text).includes(normalizeTextV124(term));
-    };
-  }
-
-  function bootV124(){
-    addInfoToTabsV124();
-    updateActiveTabClassV124();
-    moveDownloadToFiltersV124();
-    fixSearchV124();
-    patchProductFilterFunctionV124();
-  }
-
-  document.addEventListener('click', function(e){
-    if(e.target.closest && e.target.closest('.tabBtn')){
-      setTimeout(updateActiveTabClassV124, 0);
-      setTimeout(bootV124, 50);
-    }
-  }, true);
-
-  document.addEventListener('DOMContentLoaded', bootV124);
-  window.addEventListener('load', bootV124);
-  setTimeout(bootV124, 300);
-  setTimeout(bootV124, 1200);
+  document.addEventListener('DOMContentLoaded', removeAccumulatedBlocks);
+  window.addEventListener('load', removeAccumulatedBlocks);
+  setTimeout(removeAccumulatedBlocks,100);
+  setTimeout(removeAccumulatedBlocks,800);
+  setTimeout(removeAccumulatedBlocks,1600);
 })();
 </script>
 
