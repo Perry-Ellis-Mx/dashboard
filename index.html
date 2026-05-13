@@ -4535,5 +4535,154 @@ function updateProductStickyOffsets(){
 })();
 </script>
 
+
+
+<style id="v116-optimizacion-productos-top10-css">
+/* V116 - Optimización filtros Productos + Top 10 dinámico Ventas */
+#productosTab .productTableWrap{contain:layout paint style !important;will-change:auto !important;scroll-behavior:auto !important;overflow-anchor:none !important;}
+#productosTab .productTable{contain:layout style !important;}
+#productosTab .productTable,#productosTab .productTable *{transition:none!important;animation:none!important;}
+#productosTab .productTable tbody tr,#productosTab .productTable tbody td{height:86px!important;min-height:86px!important;max-height:86px!important;}
+#productosTab .productTable tbody tr:hover td,#productosTab .productTable tbody td:hover{background:#fff!important;box-shadow:none!important;transform:none!important;filter:none!important;}
+#productosTab .productImg{content-visibility:auto;contain-intrinsic-size:82px 82px;}
+#productosTab.is-rendering .productTableWrap{opacity:1!important;pointer-events:auto!important;}
+#ventasTopProductosCard{margin-top:16px;}
+.topProductsTable{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
+.topProductsTable th{padding:11px 10px;border-bottom:1px solid #e6e6e6;text-align:left;color:#777;font-size:10px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;}
+.topProductsTable td{padding:12px 10px;border-bottom:1px solid #f0f0f0;color:#111;vertical-align:middle;}
+.topProductsTable .rank{width:54px;text-align:center;font-weight:800;color:#000;}
+.topProductsTable .model{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topProductsTable .num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+.topProductsTable .barCell{width:24%;}
+.topProductsBar{height:8px;background:#eeeeee;border-radius:999px;overflow:hidden;}
+.topProductsBar span{display:block;height:100%;background:#000;border-radius:999px;}
+@media(max-width:760px){.topProductsTable .barCell{display:none}.topProductsTable{font-size:11px}}
+</style>
+<script id="v116-optimizacion-productos-top10-script">
+(function(){
+  const widths=[110,165,390,112,112,310,96,98,102,98,92,108,90,102,90,100,92,92,120];
+  function esc(v){return (typeof sanitizeHtml==='function')?sanitizeHtml(v):String(v??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+  function textOnly(html){const d=document.createElement('div');d.innerHTML=String(html??'');return d.textContent||d.innerText||'';}
+  function ensureTop10Card(){
+    const grid=document.querySelector('#ventasTab .grid');
+    if(!grid || document.getElementById('ventasTopProductosCard')) return;
+    const card=document.createElement('div');
+    card.id='ventasTopProductosCard';
+    card.className='card full';
+    card.innerHTML='<h3>Top 10 productos más vendidos</h3><div class="cardSub">Se actualiza con los filtros activos de Ventas.</div><div id="ventasTopProductos"></div>';
+    grid.appendChild(card);
+  }
+  function renderVentasTop10(){
+    ensureTop10Card();
+    const box=document.getElementById('ventasTopProductos');
+    if(!box) return;
+    const data=(window.state&&Array.isArray(state.data))?state.data:[];
+    const map=new Map();
+    data.forEach(r=>{
+      const key=String(r.modelo||'Sin información').trim()||'Sin información';
+      const current=map.get(key)||{modelo:key,venta:0,pares:0,registros:0};
+      current.venta+=(Number(r.venta)||0); current.pares+=(Number(r.pares)||0); current.registros+=1;
+      map.set(key,current);
+    });
+    const top=[...map.values()].filter(x=>x.modelo!=='Sin información').sort((a,b)=>b.pares-a.pares || b.venta-a.venta).slice(0,10);
+    if(!top.length){box.innerHTML='<div class="empty" style="margin:0">Sin productos vendidos con los filtros actuales.</div>';return;}
+    const max=Math.max(...top.map(x=>x.pares),1);
+    box.innerHTML='<table class="topProductsTable"><thead><tr><th class="rank">#</th><th>Modelo</th><th class="num">Pzas.</th><th class="num">Venta</th><th class="barCell">Participación</th></tr></thead><tbody>'+top.map((x,i)=>`<tr><td class="rank">${i+1}</td><td class="model" title="${esc(x.modelo)}">${esc(x.modelo)}</td><td class="num">${typeof num==='function'?num(x.pares):x.pares}</td><td class="num">${typeof money==='function'?money(x.venta):x.venta}</td><td class="barCell"><div class="topProductsBar"><span style="width:${Math.max(4,(x.pares/max)*100).toFixed(1)}%"></span></div></td></tr>`).join('')+'</tbody></table>';
+  }
+  const originalRender=window.render;
+  if(typeof originalRender==='function' && !originalRender.__v116Top10){
+    window.render=function(){
+      originalRender.apply(this,arguments);
+      renderVentasTop10();
+    };
+    window.render.__v116Top10=true;
+  }
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(renderVentasTop10,100));
+  window.addEventListener('load',()=>setTimeout(renderVentasTop10,350));
+
+  let renderTimer=null;
+  let renderQueued=false;
+  function getRowsFast(exceptKey=null){
+    const q=(typeof norm==='function')?norm(document.getElementById('productSearch')?.value||''):(document.getElementById('productSearch')?.value||'').toLowerCase();
+    const rows=Array.isArray(window.productRows)?window.productRows:(typeof productRows!=='undefined'?productRows:[]);
+    return rows.filter(r=>{
+      if(q && !(r.search||'').includes(q)) return false;
+      return Object.entries(productFilterState).every(([k,set])=>k===exceptKey||!set.size||set.has(productFilterValue(r,k)));
+    });
+  }
+  window.refreshProductFilters=function(){
+    Object.keys(productFilterState).forEach(key=>{
+      const box=document.querySelector(`.filter[data-pkey="${key}"]`); if(!box) return;
+      const menu=box.querySelector('.menu'); if(!menu) return;
+      const previousSearch=menu.querySelector('.search')?.value||'';
+      const vals=sortProductFilterValues(key,[...new Set(getRowsFast(key).map(r=>productFilterValue(r,key)).filter(v=>v&&norm(v)!=='sin informacion'))]);
+      productFilterState[key]=new Set([...productFilterState[key]].filter(v=>vals.includes(v)));
+      menu.innerHTML=`<input class="search" placeholder="Buscar..." value="${esc(previousSearch)}">`+(vals.length?vals.map(v=>`<label class="opt"><input type="checkbox" value="${esc(v)}" ${productFilterState[key].has(v)?'checked':''}>${esc(v)}</label>`).join(''):'<div class="opt" style="color:#777;cursor:default">Sin opciones disponibles</div>');
+      const search=menu.querySelector('.search');
+      if(search){search.addEventListener('input',e=>{const q=norm(e.target.value);menu.querySelectorAll('.opt').forEach(o=>o.style.display=norm(o.textContent).includes(q)?'flex':'none')},{passive:true});}
+      menu.querySelectorAll('input[type=checkbox]').forEach(ch=>ch.addEventListener('change',e=>{
+        const val=e.target.value; if(e.target.checked) productFilterState[key].add(val); else productFilterState[key].delete(val);
+        updateProductFilterButton(key);
+        window.refreshProductFilters();
+        window.renderProductsTable(true);
+      }));
+      updateProductFilterButton(key);
+    });
+  };
+  function actualRenderProducts(){
+    renderQueued=false;
+    const wrap=document.querySelector('#productosTab .productTableWrap');
+    const table=document.getElementById('productTable');
+    if(!wrap||!table) return;
+    const sx=wrap.scrollLeft, sy=wrap.scrollTop;
+    const baseFiltered=getRowsFast();
+    const totals=productTotalsFromRows(baseFiltered);
+    const filtered=sortProductRows(baseFiltered);
+    const cols=productRows.headers||[];
+    const displayIdx=productDisplayIndices();
+    const totalWidth=displayIdx.reduce((acc,_,pos)=>acc+(widths[pos]||100),0);
+    table.style.width=totalWidth+'px'; table.style.minWidth=totalWidth+'px';
+    let html='<colgroup>'+displayIdx.map((_,pos)=>`<col style="width:${widths[pos]||100}px;min-width:${widths[pos]||100}px;max-width:${widths[pos]||100}px">`).join('')+'</colgroup>';
+    html+='<thead><tr>'+displayIdx.map((i,pos)=>`<th class="sortable ${productSort.index===i?'sorted':''}" data-sort-index="${i}"><span class="sortHead"><span class="sortLabel">${esc(friendlyProductHeader(cols[i]))}</span><span class="sortIcon">${productSortIcon(i)}</span></span></th>`).join('')+'</tr></thead><tbody>';
+    if(filtered.length){
+      html+=filtered.map(r=>'<tr>'+displayIdx.map((i,pos)=>{
+        const c=cols[i];
+        if(i===0){return `<td>${r.image?`<img class="productImg" src="${esc(r.image)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('div'),{className:'productPlaceholder',textContent:'SIN IMG'}));">`:'<div class="productPlaceholder">SIN IMG</div>'}</td>`;}
+        const rendered=fmtProductCellComputed(r,c,totals);
+        const cls=i===1?'productModel':(i===2?'productDesc':(isProductNumericHeader(c)||norm(c).includes('meses de publicacion')?'productNum':''));
+        const txt=esc(textOnly(rendered));
+        return `<td class="${cls}" title="${txt}">${rendered}</td>`;
+      }).join('')+'</tr>').join('');
+    }else{
+      html+=`<tr><td colspan="${displayIdx.length||1}" style="padding:24px;color:#777;text-align:left">Sin resultados.</td></tr>`;
+    }
+    html+='</tbody>';
+    table.innerHTML=html;
+    table.querySelectorAll('thead th.sortable').forEach(th=>{
+      th.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();setProductSort(Number(this.dataset.sortIndex));},{passive:false});
+    });
+    renderProductTotals(baseFiltered);
+    const st=document.getElementById('productsStatus'); if(st) st.textContent='';
+    try{renderProductChips();}catch(e){}
+    wrap.scrollLeft=sx; wrap.scrollTop=sy;
+  }
+  window.renderProductsTable=function(immediate=false){
+    if(renderTimer) clearTimeout(renderTimer);
+    if(immediate){actualRenderProducts();return;}
+    if(renderQueued) return;
+    renderQueued=true;
+    renderTimer=setTimeout(()=>requestAnimationFrame(actualRenderProducts),16);
+  };
+  const clearBtn=document.getElementById('clearProductFilters');
+  if(clearBtn){clearBtn.addEventListener('click',e=>{
+    e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+    Object.values(productFilterState).forEach(s=>s.clear());
+    const search=document.getElementById('productSearch'); if(search) search.value='';
+    window.refreshProductFilters();
+    window.renderProductsTable(true);
+  },true);}
+})();
+</script>
+
 </body>
 </html>
