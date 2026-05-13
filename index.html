@@ -4686,7 +4686,7 @@ function updateProductStickyOffsets(){
 
 
 <style id="v117-top10-productos-corregido-css">
-/* V117 - Top 10 Ventas corregido: imagen + modelo + pares + vendido */
+/* V118 - Top 10 Ventas corregido: imagen + modelo + pares + vendido */
 #ventasTopProductosCard{margin-top:18px!important;}
 #ventasTopProductosCard .cardSub{margin-bottom:14px!important;}
 .topProductsTable{width:100%;border-collapse:separate!important;border-spacing:0!important;font-size:12px;table-layout:fixed;background:#fff;}
@@ -4748,7 +4748,7 @@ function updateProductStickyOffsets(){
     card.innerHTML='<h3>Top 10 productos más vendidos</h3><div class="cardSub">Se actualiza con los filtros activos de Ventas.</div><div id="ventasTopProductos"></div>';
     return card;
   }
-  function renderVentasTop10V117(){
+  function renderVentasTop10V118(){
     ensureTop10Card();
     const box=document.getElementById('ventasTopProductos');
     if(!box) return;
@@ -4772,20 +4772,118 @@ function updateProductStickyOffsets(){
     }).join('');
     box.innerHTML='<table class="topProductsTable"><thead><tr><th class="rank">#</th><th class="imgCol">Imagen</th><th>Modelo</th><th class="num">Pares</th><th class="num">$ vendido</th></tr></thead><tbody>'+rows+'</tbody></table>';
   }
-  window.renderVentasTop10V117=renderVentasTop10V117;
+  window.renderVentasTop10V118=renderVentasTop10V118;
   const prevRender=window.render;
   if(typeof prevRender==='function' && !prevRender.__v117Top10Fix){
     window.render=function(){
       const result=prevRender.apply(this,arguments);
-      try{ renderVentasTop10V117(); }catch(e){ console.warn('Top 10 V117:',e); }
+      try{ renderVentasTop10V118(); }catch(e){ console.warn('Top 10 V118:',e); }
       return result;
     };
     window.render.__v117Top10Fix=true;
   }
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(renderVentasTop10V117,250);});
-  window.addEventListener('load',function(){setTimeout(renderVentasTop10V117,700);});
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(renderVentasTop10V118,250);});
+  window.addEventListener('load',function(){setTimeout(renderVentasTop10V118,700);});
+})();
+</script>
+
+
+
+<style id="v118-top10-centrado-zoom-css">
+/* V118 - Top 10: Pares/Piezas, datos centrados e imagen clickeable con zoom */
+#ventasTopProductos .topProductsTable th,
+#ventasTopProductos .topProductsTable td{
+  text-align:center !important;
+  vertical-align:middle !important;
+}
+#ventasTopProductos .topProductsTable .model,
+#ventasTopProductos .topProductsTable .num,
+#ventasTopProductos .topProductsTable .rank,
+#ventasTopProductos .topProductsTable .imgCol{
+  text-align:center !important;
+}
+#ventasTopProductos .topProductsTable .model{
+  font-weight:850 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+#ventasTopProductos .topProductsTable .num{
+  font-variant-numeric:tabular-nums !important;
+  font-weight:800 !important;
+}
+#ventasTopProductos .topProductImg{
+  cursor:zoom-in !important;
+  width:64px !important;
+  height:64px !important;
+  object-fit:contain !important;
+  display:block !important;
+  margin:0 auto !important;
+  transition:none !important;
+  transform:none !important;
+  border:1px solid #e8e8e8 !important;
+  border-radius:12px !important;
+  background:#fff !important;
+  padding:4px !important;
+}
+#ventasTopProductos .topProductImg:hover{
+  transform:none !important;
+  box-shadow:none !important;
+}
+#ventasTopProductos .topProductPlaceholder{
+  width:64px !important;
+  height:64px !important;
+  margin:0 auto !important;
+}
+</style>
+<script id="v118-top10-centrado-zoom-script">
+(function(){
+  function escV118(v){
+    return (typeof sanitizeHtml==='function')
+      ? sanitizeHtml(v)
+      : String(v??'').replace(/[&<>\"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m] || m;});
+  }
+  function openTop10ImageV118(img){
+    const lightbox=document.getElementById('productLightbox');
+    const lightboxImg=document.getElementById('productLightboxImg');
+    if(!lightbox || !lightboxImg || !img || !img.src) return;
+    lightboxImg.src=img.src;
+    lightboxImg.style.transform='scale(1)';
+    lightboxImg.style.cursor='zoom-in';
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden','false');
+  }
+  document.addEventListener('click',function(e){
+    const img=e.target.closest && e.target.closest('#ventasTopProductos .topProductImg');
+    if(img){
+      e.preventDefault();
+      e.stopPropagation();
+      openTop10ImageV118(img);
+    }
+  },true);
+
+  const previous=window.renderVentasTop10V118;
+  if(typeof previous==='function' && !previous.__v118Top10CenterZoom){
+    window.renderVentasTop10V118=function(){
+      previous.apply(this,arguments);
+      const box=document.getElementById('ventasTopProductos');
+      if(!box) return;
+      const ths=box.querySelectorAll('.topProductsTable thead th');
+      ths.forEach(th=>{
+        if((th.textContent||'').trim().toLowerCase()==='pares') th.textContent='Pares/Piezas';
+      });
+      box.querySelectorAll('.topProductImg').forEach(img=>{
+        img.setAttribute('title','Clic para ampliar');
+        img.setAttribute('loading','lazy');
+      });
+    };
+    window.renderVentasTop10V118.__v118Top10CenterZoom=true;
+  }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(function(){try{window.renderVentasTop10V118&&window.renderVentasTop10V118();}catch(e){}},350);});
+  window.addEventListener('load',function(){setTimeout(function(){try{window.renderVentasTop10V118&&window.renderVentasTop10V118();}catch(e){}},850);});
 })();
 </script>
 
 </body>
 </html>
+
