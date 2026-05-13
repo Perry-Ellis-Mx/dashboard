@@ -4884,6 +4884,425 @@ function updateProductStickyOffsets(){
 })();
 </script>
 
+
+<style id="v119-top10-imagenes-fix-css">
+/* V119 - Fix imágenes Top 10: centrado, clic zoom y placeholders limpios */
+#ventasTopProductos .topProductsTable th,
+#ventasTopProductos .topProductsTable td{
+  text-align:center !important;
+  vertical-align:middle !important;
+}
+#ventasTopProductos .topProductImg{
+  width:64px !important;
+  height:64px !important;
+  object-fit:contain !important;
+  display:block !important;
+  margin:0 auto !important;
+  cursor:zoom-in !important;
+  background:#fff !important;
+  border:1px solid #e8e8e8 !important;
+  border-radius:12px !important;
+  padding:4px !important;
+  transition:none !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+#ventasTopProductos .topProductImg:hover{
+  transform:none !important;
+  box-shadow:none !important;
+}
+#ventasTopProductos .topProductPlaceholder{
+  width:64px !important;
+  height:64px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:0 auto !important;
+  border:1px dashed #d7d7d7 !important;
+  border-radius:12px !important;
+  background:#fff !important;
+  color:#999 !important;
+  font-size:9px !important;
+}
+</style>
+
+<script id="v119-top10-imagenes-fix-script">
+(function(){
+  function safe(v){
+    return (typeof sanitizeHtml==='function')
+      ? sanitizeHtml(v)
+      : String(v ?? '').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});
+  }
+  function normalizeKey(v){
+    const base = (typeof norm==='function')
+      ? norm(v)
+      : String(v ?? '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ');
+    return base;
+  }
+  function compactKey(v){
+    return normalizeKey(v).replace(/[^a-z0-9]/g,'');
+  }
+  function getProductRowsV119(){
+    try{
+      if(typeof productRows !== 'undefined' && Array.isArray(productRows)) return productRows;
+    }catch(e){}
+    try{
+      if(window.productRows && Array.isArray(window.productRows)) return window.productRows;
+    }catch(e){}
+    return [];
+  }
+  function getSalesRowsV119(){
+    try{
+      if(typeof state !== 'undefined' && Array.isArray(state.data)) return state.data;
+    }catch(e){}
+    return [];
+  }
+  function headerIdx(headers, names){
+    const hs=(headers || []).map(normalizeKey);
+    for(const name of names){
+      const t=normalizeKey(name);
+      const exact=hs.indexOf(t);
+      if(exact >= 0) return exact;
+    }
+    for(const name of names){
+      const t=normalizeKey(name);
+      const idx=hs.findIndex(h=>h === t || h.includes(t));
+      if(idx >= 0) return idx;
+    }
+    return -1;
+  }
+  function extractImageUrl(v){
+    const text=String(v || '').trim();
+    if(!text) return '';
+    if(/^data:image\//i.test(text)) return text;
+    const m=text.match(/https?:\/\/[^\s"')]+/i);
+    return m ? m[0] : '';
+  }
+  function makeImageMapV119(){
+    const rows=getProductRowsV119();
+    const headers=rows.headers || [];
+    const modelIdx=headerIdx(headers,['Modelo','Model','SKU','Sku']);
+    const imgIdx=headerIdx(headers,['Imagen','Image','Foto','Fotografía','Fotografia']);
+    const map=new Map();
+
+    rows.forEach(function(row){
+      const values=row.values || [];
+      const model=String((modelIdx >= 0 ? values[modelIdx] : '') || '').trim();
+      const image=row.image || (imgIdx >= 0 ? extractImageUrl(values[imgIdx]) : '');
+      if(!model || !image) return;
+
+      const keys=[
+        model,
+        normalizeKey(model),
+        compactKey(model),
+        model.split(/[\/\s]+/)[0],
+        normalizeKey(model.split(/[\/\s]+/)[0]),
+        compactKey(model.split(/[\/\s]+/)[0])
+      ];
+      keys.forEach(function(k){
+        if(k && !map.has(k)) map.set(k,image);
+      });
+    });
+    return map;
+  }
+  function findTopImageV119(model, sku, imgMap){
+    const candidates=[
+      model,
+      sku,
+      normalizeKey(model),
+      normalizeKey(sku),
+      compactKey(model),
+      compactKey(sku),
+      String(model||'').split(/[\/\s]+/)[0],
+      String(sku||'').split(/[\/\s]+/)[0],
+      normalizeKey(String(model||'').split(/[\/\s]+/)[0]),
+      normalizeKey(String(sku||'').split(/[\/\s]+/)[0]),
+      compactKey(String(model||'').split(/[\/\s]+/)[0]),
+      compactKey(String(sku||'').split(/[\/\s]+/)[0])
+    ].filter(Boolean);
+
+    for(const c of candidates){
+      if(imgMap.has(c)) return imgMap.get(c);
+    }
+
+    const compactModel=compactKey(model);
+    if(compactModel){
+      for(const [k,img] of imgMap.entries()){
+        const ck=compactKey(k);
+        if(ck && (ck.includes(compactModel) || compactModel.includes(ck))) return img;
+      }
+    }
+    return '';
+  }
+  function ensureCardV119(){
+    const grid=document.querySelector('#ventasTab .grid');
+    if(!grid) return null;
+    let card=document.getElementById('ventasTopProductosCard');
+    if(!card){
+      card=document.createElement('div');
+      card.id='ventasTopProductosCard';
+      card.className='card full';
+      grid.appendChild(card);
+    }
+    card.innerHTML='<h3>Top 10 productos más vendidos</h3><div class="cardSub">Se actualiza con los filtros activos de Ventas.</div><div id="ventasTopProductos"></div>';
+    return card;
+  }
+  function renderTop10V119(){
+    ensureCardV119();
+    const box=document.getElementById('ventasTopProductos');
+    if(!box) return;
+
+    const sales=getSalesRowsV119();
+    const grouped=new Map();
+
+    sales.forEach(function(r){
+      const model=String(r.modelo || r.sku || 'Sin información').trim() || 'Sin información';
+      if(model === 'Sin información') return;
+      const key=model;
+      const item=grouped.get(key) || {modelo:model, sku:String(r.sku || '').trim(), pares:0, venta:0};
+      item.pares += Number(r.pares) || 0;
+      item.venta += Number(r.venta) || 0;
+      if(!item.sku && r.sku) item.sku=String(r.sku).trim();
+      grouped.set(key,item);
+    });
+
+    const top=[...grouped.values()]
+      .filter(x => x.pares > 0 || x.venta > 0)
+      .sort((a,b)=> b.pares-a.pares || b.venta-a.venta || String(a.modelo).localeCompare(String(b.modelo),'es'))
+      .slice(0,10);
+
+    if(!top.length){
+      box.innerHTML='<div class="empty" style="margin:0">Sin productos vendidos con los filtros actuales.</div>';
+      return;
+    }
+
+    const imgMap=makeImageMapV119();
+    const rows=top.map(function(x,i){
+      const img=findTopImageV119(x.modelo, x.sku, imgMap);
+      const imgHtml=img
+        ? '<img class="topProductImg" src="'+safe(img)+'" alt="'+safe(x.modelo)+'" title="Clic para ampliar" loading="eager" decoding="async" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement(\'div\'),{className:\'topProductPlaceholder\',textContent:\'Sin imagen\'}));">'
+        : '<div class="topProductPlaceholder">Sin imagen</div>';
+
+      const pares = (typeof num==='function') ? num(x.pares) : String(x.pares);
+      const venta = (typeof money==='function') ? money(x.venta) : String(x.venta);
+
+      return '<tr>'
+        + '<td class="rank">'+(i+1)+'</td>'
+        + '<td class="imgCol">'+imgHtml+'</td>'
+        + '<td class="model" title="'+safe(x.modelo)+'">'+safe(x.modelo)+'</td>'
+        + '<td class="num">'+pares+'</td>'
+        + '<td class="num">'+venta+'</td>'
+        + '</tr>';
+    }).join('');
+
+    box.innerHTML='<table class="topProductsTable">'
+      + '<thead><tr><th class="rank">#</th><th class="imgCol">Imagen</th><th>Modelo</th><th class="num">Pares/Piezas</th><th class="num">$ vendido</th></tr></thead>'
+      + '<tbody>'+rows+'</tbody></table>';
+  }
+
+  window.renderVentasTop10V118 = renderTop10V119;
+  window.renderVentasTop10V119 = renderTop10V119;
+
+  const oldRender=window.render;
+  if(typeof oldRender==='function' && !oldRender.__v119Top10Images){
+    window.render=function(){
+      const result=oldRender.apply(this,arguments);
+      setTimeout(renderTop10V119,0);
+      setTimeout(renderTop10V119,250);
+      return result;
+    };
+    window.render.__v119Top10Images=true;
+  }
+
+  const oldCSV=window.renderProductsFromCSVArray;
+  if(typeof oldCSV==='function' && !oldCSV.__v119Top10Images){
+    window.renderProductsFromCSVArray=function(){
+      const result=oldCSV.apply(this,arguments);
+      setTimeout(renderTop10V119,50);
+      setTimeout(renderTop10V119,400);
+      return result;
+    };
+    window.renderProductsFromCSVArray.__v119Top10Images=true;
+  }
+
+  const oldWB=window.renderProductsFromWorkbook;
+  if(typeof oldWB==='function' && !oldWB.__v119Top10Images){
+    window.renderProductsFromWorkbook=async function(){
+      const result=await oldWB.apply(this,arguments);
+      setTimeout(renderTop10V119,50);
+      setTimeout(renderTop10V119,400);
+      return result;
+    };
+    window.renderProductsFromWorkbook.__v119Top10Images=true;
+  }
+
+  document.addEventListener('click',function(e){
+    const img=e.target.closest && e.target.closest('#ventasTopProductos .topProductImg');
+    if(!img) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const lightbox=document.getElementById('productLightbox');
+    const lightboxImg=document.getElementById('productLightboxImg');
+    if(lightbox && lightboxImg){
+      lightboxImg.src=img.src;
+      lightboxImg.style.transform='scale(1)';
+      lightboxImg.style.cursor='zoom-in';
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden','false');
+    }
+  },true);
+
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(renderTop10V119,250);
+    setTimeout(renderTop10V119,900);
+    setTimeout(renderTop10V119,1800);
+  });
+  window.addEventListener('load',function(){
+    setTimeout(renderTop10V119,500);
+    setTimeout(renderTop10V119,1500);
+    setTimeout(renderTop10V119,3000);
+  });
+})();
+</script>
+
+
+<style id="v120-productos-info">
+.productosDataInfo{
+  margin:0 0 14px;
+  padding:14px 18px;
+  border:1px solid #e6e6e6;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 10px 26px rgba(0,0,0,.035);
+  font-family:"Nunito Sans",Arial,sans-serif;
+}
+.productosDataInfo .infoTitle{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:#777;
+  margin-bottom:6px;
+}
+.productosDataInfo .infoText{
+  font-size:13px;
+  color:#111;
+  line-height:1.45;
+}
+.productosDataInfo b{
+  font-weight:800;
+}
+</style>
+
+<script id="v120-productos-info-script">
+(function(){
+  function formatDateV120(value){
+    if(!value) return '';
+    try{
+      const d = new Date(value);
+      if(!isNaN(d.getTime())){
+        return d.toLocaleDateString('es-MX',{
+          day:'2-digit',
+          month:'long',
+          year:'numeric'
+        });
+      }
+    }catch(e){}
+    return String(value);
+  }
+
+  function getLastSalesDateV120(){
+    try{
+      const rows = (window.state && Array.isArray(window.state.data))
+        ? window.state.data
+        : [];
+
+      if(!rows.length) return 'Sin información';
+
+      const possibleKeys = [
+        'fecha','Fecha','date','Date',
+        'fecha venta','Fecha Venta'
+      ];
+
+      let latest = null;
+
+      rows.forEach(r=>{
+        let raw = null;
+
+        for(const key of possibleKeys){
+          if(r[key]){
+            raw = r[key];
+            break;
+          }
+        }
+
+        if(!raw) return;
+
+        const d = new Date(raw);
+
+        if(!isNaN(d.getTime())){
+          if(!latest || d > latest){
+            latest = d;
+          }
+        }
+      });
+
+      if(!latest) return 'Sin información';
+
+      return latest.toLocaleDateString('es-MX',{
+        day:'2-digit',
+        month:'long',
+        year:'numeric'
+      });
+
+    }catch(e){
+      return 'Sin información';
+    }
+  }
+
+  function renderProductosInfoV120(){
+    const tab = document.querySelector('#productosTab');
+    if(!tab) return;
+
+    const existing = document.getElementById('productosDataInfo');
+    if(existing) existing.remove();
+
+    const head = tab.querySelector('.productsHead') || tab.firstElementChild;
+    if(!head) return;
+
+    const div = document.createElement('div');
+    div.id = 'productosDataInfo';
+    div.className = 'productosDataInfo';
+
+    const lastDate = getLastSalesDateV120();
+
+    div.innerHTML = `
+      <div class="infoTitle">Información del reporte</div>
+      <div class="infoText">
+        Los datos mostrados en esta pestaña corresponden al <b>acumulado histórico de todos los años</b> hasta la última actualización registrada.
+        <br><br>
+        <b>Última fecha de venta registrada:</b> ${lastDate}
+      </div>
+    `;
+
+    head.insertAdjacentElement('afterend', div);
+  }
+
+  const oldRender = window.render;
+  if(typeof oldRender === 'function' && !oldRender.__v120Info){
+    window.render = function(){
+      const result = oldRender.apply(this, arguments);
+      setTimeout(renderProductosInfoV120, 200);
+      return result;
+    };
+    window.render.__v120Info = true;
+  }
+
+  window.addEventListener('load', ()=>{
+    setTimeout(renderProductosInfoV120, 500);
+    setTimeout(renderProductosInfoV120, 1500);
+  });
+})();
+</script>
+
 </body>
 </html>
-
