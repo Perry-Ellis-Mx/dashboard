@@ -2534,7 +2534,7 @@
 <body>
 <div class="wrap">
 <div class="top">
-<div class="brand"><div><div class="logo">PERRY ELLIS</div><div class="sub">Dashboard ejecutivo de ventas · México · 2025 / 2026</div></div></div>
+<div class="brand"><div><div class="logo">PERRY ELLIS</div><div class="sub">Reporte de Ventas Perry Ellis México | 2025/2026</div></div></div>
 <div class="upload"><input accept=".xlsx,.xls" id="fileInput" type="file" style="display:none"/><div class="status" id="status">Cargando datos desde <b>Google Sheets</b>...</div><div class="debug" id="debug"></div></div>
 </div>
 <div class="tabs"><button class="tabBtn active" data-tab="ventasTab">Ventas</button><button class="tabBtn" data-tab="productosTab">Productos</button></div>
@@ -5166,141 +5166,111 @@ function updateProductStickyOffsets(){
 </script>
 
 
-<style id="v120-productos-info">
-.productosDataInfo{
-  margin:0 0 14px;
-  padding:14px 18px;
-  border:1px solid #e6e6e6;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style id="v123-productos-info-top-right">
+#productosTab .productsHead{
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:flex-start !important;
+  gap:18px !important;
+}
+#productosTab .productosInfoTopRight{
+  flex:0 0 auto;
+  max-width:420px;
+  margin-left:auto;
+  padding:11px 14px;
+  border:1px solid #e4e4e4;
   border-radius:18px;
-  background:#fff;
-  box-shadow:0 10px 26px rgba(0,0,0,.035);
-  font-family:"Nunito Sans",Arial,sans-serif;
-}
-.productosDataInfo .infoTitle{
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-  color:#777;
-  margin-bottom:6px;
-}
-.productosDataInfo .infoText{
-  font-size:13px;
+  background:#ffffff;
+  box-shadow:0 12px 28px rgba(0,0,0,.04);
+  text-align:right;
   color:#111;
-  line-height:1.45;
 }
-.productosDataInfo b{
+#productosTab .productosInfoTopRight .infoEyebrow{
+  font-size:9.5px;
+  color:#777;
+  text-transform:uppercase;
+  letter-spacing:.13em;
   font-weight:800;
+  margin-bottom:5px;
+}
+#productosTab .productosInfoTopRight .infoMain{
+  font-size:12px;
+  line-height:1.32;
+  color:#111;
+  font-weight:650;
+}
+#productosTab .productosInfoTopRight .infoDate{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  margin-top:7px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#000;
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+@media(max-width:900px){
+  #productosTab .productsHead{
+    flex-direction:column !important;
+  }
+  #productosTab .productosInfoTopRight{
+    width:100%;
+    max-width:none;
+    text-align:left;
+    margin-left:0;
+  }
 }
 </style>
 
-<script id="v120-productos-info-script">
+<script id="v123-productos-info-top-right-script">
 (function(){
-  function formatDateV120(value){
-    if(!value) return '';
-    try{
-      const d = new Date(value);
-      if(!isNaN(d.getTime())){
-        return d.toLocaleDateString('es-MX',{
-          day:'2-digit',
-          month:'long',
-          year:'numeric'
-        });
-      }
-    }catch(e){}
-    return String(value);
-  }
-
-  function getLastSalesDateV120(){
-    try{
-      const rows = (window.state && Array.isArray(window.state.data))
-        ? window.state.data
-        : [];
-
-      if(!rows.length) return 'Sin información';
-
-      const possibleKeys = [
-        'fecha','Fecha','date','Date',
-        'fecha venta','Fecha Venta'
-      ];
-
-      let latest = null;
-
-      rows.forEach(r=>{
-        let raw = null;
-
-        for(const key of possibleKeys){
-          if(r[key]){
-            raw = r[key];
-            break;
-          }
-        }
-
-        if(!raw) return;
-
-        const d = new Date(raw);
-
-        if(!isNaN(d.getTime())){
-          if(!latest || d > latest){
-            latest = d;
-          }
-        }
-      });
-
-      if(!latest) return 'Sin información';
-
-      return latest.toLocaleDateString('es-MX',{
-        day:'2-digit',
-        month:'long',
-        year:'numeric'
-      });
-
-    }catch(e){
-      return 'Sin información';
-    }
-  }
-
-  function renderProductosInfoV120(){
+  function ensureProductosInfoTopRight(){
     const tab = document.querySelector('#productosTab');
     if(!tab) return;
 
-    const existing = document.getElementById('productosDataInfo');
-    if(existing) existing.remove();
+    const old = document.getElementById('productosOnlyInfo');
+    if(old) old.remove();
 
-    const head = tab.querySelector('.productsHead') || tab.firstElementChild;
+    const head = tab.querySelector('.productsHead');
     if(!head) return;
 
-    const div = document.createElement('div');
-    div.id = 'productosDataInfo';
-    div.className = 'productosDataInfo';
+    let box = document.getElementById('productosInfoTopRight');
+    if(!box){
+      box = document.createElement('div');
+      box.id = 'productosInfoTopRight';
+      box.className = 'productosInfoTopRight';
+      head.appendChild(box);
+    }
 
-    const lastDate = getLastSalesDateV120();
-
-    div.innerHTML = `
-      <div class="infoTitle">Información del reporte</div>
-      <div class="infoText">
-        Los datos mostrados en esta pestaña corresponden al <b>acumulado histórico de todos los años</b> hasta la última actualización registrada.
-        <br><br>
-        <b>Última fecha de venta registrada:</b> ${lastDate}
-      </div>
+    box.innerHTML = `
+      <div class="infoEyebrow">Dato acumulado histórico</div>
+      <div class="infoMain">Todos los años hasta la última actualización registrada.</div>
+      <div class="infoDate">Última venta: 12-mayo-2026</div>
     `;
-
-    head.insertAdjacentElement('afterend', div);
   }
 
-  const oldRender = window.render;
-  if(typeof oldRender === 'function' && !oldRender.__v120Info){
-    window.render = function(){
-      const result = oldRender.apply(this, arguments);
-      setTimeout(renderProductosInfoV120, 200);
-      return result;
-    };
-    window.render.__v120Info = true;
-  }
-
-  window.addEventListener('load', ()=>{
-    setTimeout(renderProductosInfoV120, 500);
-    setTimeout(renderProductosInfoV120, 1500);
-  });
+  document.addEventListener('DOMContentLoaded', ensureProductosInfoTopRight);
+  window.addEventListener('load', ensureProductosInfoTopRight);
+  setTimeout(ensureProductosInfoTopRight, 300);
+  setTimeout(ensureProductosInfoTopRight, 1200);
 })();
 </script>
 
