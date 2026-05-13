@@ -4684,5 +4684,108 @@ function updateProductStickyOffsets(){
 })();
 </script>
 
+
+<style id="v117-top10-productos-corregido-css">
+/* V117 - Top 10 Ventas corregido: imagen + modelo + pares + vendido */
+#ventasTopProductosCard{margin-top:18px!important;}
+#ventasTopProductosCard .cardSub{margin-bottom:14px!important;}
+.topProductsTable{width:100%;border-collapse:separate!important;border-spacing:0!important;font-size:12px;table-layout:fixed;background:#fff;}
+.topProductsTable th{background:#000!important;color:#fff!important;padding:12px 10px!important;border-right:1px solid #222!important;text-align:center!important;font-size:10px!important;letter-spacing:.10em!important;text-transform:uppercase!important;font-weight:850!important;line-height:1.1!important;}
+.topProductsTable th:first-child{border-top-left-radius:14px;}
+.topProductsTable th:last-child{border-top-right-radius:14px;border-right:none!important;}
+.topProductsTable td{height:72px;padding:10px 12px!important;border-bottom:1px solid #eeeeee!important;border-right:1px solid #f5f5f5!important;color:#111;vertical-align:middle;background:#fff!important;}
+.topProductsTable td:last-child{border-right:none!important;}
+.topProductsTable tr:hover td{background:#fff!important;box-shadow:none!important;transform:none!important;}
+.topProductsTable .rank{width:52px;text-align:center;font-weight:850;color:#000;}
+.topProductsTable .imgCol{width:96px;text-align:center;}
+.topProductsTable .model{font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#000;}
+.topProductsTable .num{text-align:right;font-variant-numeric:tabular-nums;font-weight:800;}
+.topProductImg{width:58px;height:58px;object-fit:contain;border:1px solid #e8e8e8;border-radius:12px;background:#fff;padding:4px;display:block;margin:0 auto;}
+.topProductPlaceholder{width:58px;height:58px;border:1px dashed #d7d7d7;border-radius:12px;background:#fff;color:#999;display:flex;align-items:center;justify-content:center;font-size:9px;margin:0 auto;}
+@media(max-width:760px){.topProductsTable{font-size:11px}.topProductsTable .imgCol{width:76px}.topProductImg,.topProductPlaceholder{width:48px;height:48px}}
+</style>
+<script id="v117-top10-productos-corregido-script">
+(function(){
+  function esc(v){return (typeof sanitizeHtml==='function')?sanitizeHtml(v):String(v??'').replace(/[&<>\"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
+  function nrm(v){return (typeof norm==='function')?norm(v):String(v??'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ');}
+  function getSalesData(){
+    try{ if(typeof state!=='undefined' && Array.isArray(state.data)) return state.data; }catch(e){}
+    return [];
+  }
+  function getProductRows(){
+    try{ if(typeof productRows!=='undefined' && Array.isArray(productRows)) return productRows; }catch(e){}
+    return [];
+  }
+  function headerIndex(headers,names){
+    const list=(headers||[]).map(nrm);
+    for(const name of names){ const t=nrm(name); const exact=list.indexOf(t); if(exact>=0) return exact; }
+    for(const name of names){ const t=nrm(name); const idx=list.findIndex(h=>h===t || h.includes(t)); if(idx>=0) return idx; }
+    return -1;
+  }
+  function buildImageMap(){
+    const rows=getProductRows();
+    const headers=rows.headers||[];
+    const mi=headerIndex(headers,['Modelo','Model','SKU','Sku']);
+    const map=new Map();
+    if(mi<0) return map;
+    rows.forEach(r=>{
+      const model=String((r.values||[])[mi]||'').trim();
+      if(model && r.image && !map.has(model)) map.set(model,r.image);
+      const key=nrm(model); if(key && r.image && !map.has(key)) map.set(key,r.image);
+    });
+    return map;
+  }
+  function ensureTop10Card(){
+    const grid=document.querySelector('#ventasTab .grid');
+    if(!grid) return null;
+    let card=document.getElementById('ventasTopProductosCard');
+    if(!card){
+      card=document.createElement('div');
+      card.id='ventasTopProductosCard';
+      card.className='card full';
+      grid.appendChild(card);
+    }
+    card.innerHTML='<h3>Top 10 productos más vendidos</h3><div class="cardSub">Se actualiza con los filtros activos de Ventas.</div><div id="ventasTopProductos"></div>';
+    return card;
+  }
+  function renderVentasTop10V117(){
+    ensureTop10Card();
+    const box=document.getElementById('ventasTopProductos');
+    if(!box) return;
+    const data=getSalesData();
+    const map=new Map();
+    data.forEach(r=>{
+      const modelo=String(r.modelo||r.sku||'Sin información').trim()||'Sin información';
+      if(modelo==='Sin información') return;
+      const o=map.get(modelo)||{modelo:modelo,pares:0,venta:0};
+      o.pares+=Number(r.pares)||0;
+      o.venta+=Number(r.venta)||0;
+      map.set(modelo,o);
+    });
+    const top=[...map.values()].filter(x=>(x.pares>0||x.venta>0)).sort((a,b)=>b.pares-a.pares || b.venta-a.venta || a.modelo.localeCompare(b.modelo,'es')).slice(0,10);
+    if(!top.length){box.innerHTML='<div class="empty" style="margin:0">Sin productos vendidos con los filtros actuales.</div>';return;}
+    const imgMap=buildImageMap();
+    const rows=top.map((x,i)=>{
+      const img=imgMap.get(x.modelo)||imgMap.get(nrm(x.modelo))||'';
+      const imgHtml=img?`<img class="topProductImg" src="${esc(img)}" alt="${esc(x.modelo)}">`:'<div class="topProductPlaceholder">Sin imagen</div>';
+      return `<tr><td class="rank">${i+1}</td><td class="imgCol">${imgHtml}</td><td class="model" title="${esc(x.modelo)}">${esc(x.modelo)}</td><td class="num">${typeof num==='function'?num(x.pares):x.pares}</td><td class="num">${typeof money==='function'?money(x.venta):x.venta}</td></tr>`;
+    }).join('');
+    box.innerHTML='<table class="topProductsTable"><thead><tr><th class="rank">#</th><th class="imgCol">Imagen</th><th>Modelo</th><th class="num">Pares</th><th class="num">$ vendido</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  }
+  window.renderVentasTop10V117=renderVentasTop10V117;
+  const prevRender=window.render;
+  if(typeof prevRender==='function' && !prevRender.__v117Top10Fix){
+    window.render=function(){
+      const result=prevRender.apply(this,arguments);
+      try{ renderVentasTop10V117(); }catch(e){ console.warn('Top 10 V117:',e); }
+      return result;
+    };
+    window.render.__v117Top10Fix=true;
+  }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(renderVentasTop10V117,250);});
+  window.addEventListener('load',function(){setTimeout(renderVentasTop10V117,700);});
+})();
+</script>
+
 </body>
 </html>
