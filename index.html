@@ -5232,74 +5232,66 @@ function updateProductStickyOffsets(){
 </script>
 
 
-<style id="v126-ventas-reorden-meses-css">
-/* V126 - Reorden final de gráficas ejecutivas + meses completos */
-#ventasTab .grid .card[data-v126-bottom="true"]{
+
+
+
+
+
+<style id="v127-ventas-meses-completos-css">
+#ventasTab .grid .card[data-v127-bottom="true"]{
   order:999 !important;
 }
 #ventasTab .grid #ventasTopProductosCard{
   order:998 !important;
 }
-#ventasTab .grid{
-  align-items:stretch !important;
-}
-#ventasTab .chartBox.v126-months-full{
-  height:360px !important;
+#ventasTab .chartBox.v127-months-full{
+  height:390px !important;
 }
 </style>
 
-<script id="v126-ventas-reorden-meses-script">
+<script id="v127-ventas-meses-completos-script">
 (function(){
-  function getCardByCanvas(id){
-    var canvas = document.getElementById(id);
+  function getCardByCanvasV127(id){
+    var canvas=document.getElementById(id);
     return canvas ? canvas.closest('.card') : null;
   }
 
-  function moveExecutiveChartsToBottomV126(){
-    var grid = document.querySelector('#ventasTab .grid');
+  function moveExecutiveChartsToBottomV127(){
+    var grid=document.querySelector('#ventasTab .grid');
     if(!grid) return;
 
-    var top10 = document.getElementById('ventasTopProductosCard');
-
-    var cards = [
-      getCardByCanvas('ventasAcumuladasInicio'),
-      getCardByCanvas('ventasCanalAnio'),
-      getCardByCanvas('ventasAnio')
-    ].filter(Boolean);
-
-    cards.forEach(function(card){
-      card.setAttribute('data-v126-bottom','true');
+    [
+      getCardByCanvasV127('ventasAcumuladasInicio'),
+      getCardByCanvasV127('ventasCanalAnio'),
+      getCardByCanvasV127('ventasAnio')
+    ].filter(Boolean).forEach(function(card){
+      card.setAttribute('data-v127-bottom','true');
+      grid.appendChild(card);
     });
-
-    if(top10){
-      cards.forEach(function(card){
-        grid.appendChild(card);
-      });
-    }
   }
 
-  function ymKeyV126(r){
-    var y = Number(r && r.anio);
-    var m = Number(r && r.mesNum);
+  function ymKeyV127(r){
+    var y=Number(r && r.anio);
+    var m=Number(r && r.mesNum);
     if(!y || !m) return '';
     return y + '-' + String(m).padStart(2,'0');
   }
 
-  function labelV126(key){
-    var monthNames = (typeof M !== 'undefined' && Array.isArray(M))
+  function labelV127(key){
+    var months=(typeof M !== 'undefined' && Array.isArray(M))
       ? M
       : ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    var y = key.slice(0,4);
-    var m = Number(key.slice(5,7));
-    return monthNames[m-1].slice(0,3) + ' ' + y.slice(2,4);
+    var y=key.slice(0,4);
+    var m=Number(key.slice(5,7));
+    return months[m-1].slice(0,3) + ' ' + y.slice(2,4);
   }
 
-  function filteredExceptCanalV126(){
+  function filteredExceptCanalV127(){
     try{
       if(!window.state || !Array.isArray(state.raw)) return [];
       return state.raw.filter(function(r){
         return Object.entries(state.filters || {}).every(function(pair){
-          var k = pair[0], set = pair[1];
+          var k=pair[0], set=pair[1];
           if(k === 'canal') return true;
           return !set.size || set.has(String(r[k]));
         });
@@ -5309,63 +5301,88 @@ function updateProductStickyOffsets(){
     }
   }
 
-  function buildMonthKeysV126(){
-    var base = filteredExceptCanalV126();
-    if(!base.length && window.state && Array.isArray(state.raw)) base = state.raw.slice();
+  function buildMonthKeysV127(){
+    var base=filteredExceptCanalV127();
+    if((!base || !base.length) && window.state && Array.isArray(state.raw)) base=state.raw.slice();
 
-    var keys = base.map(ymKeyV126).filter(Boolean).sort();
+    var keys=(base || []).map(ymKeyV127).filter(Boolean).sort();
     if(!keys.length) return [];
 
-    var first = keys[0];
-    var last = keys[keys.length - 1];
+    var first=keys[0], last=keys[keys.length-1];
+    var y=Number(first.slice(0,4)), m=Number(first.slice(5,7));
+    var endY=Number(last.slice(0,4)), endM=Number(last.slice(5,7));
 
-    var startY = Number(first.slice(0,4));
-    var startM = Number(first.slice(5,7));
-    var endY = Number(last.slice(0,4));
-    var endM = Number(last.slice(5,7));
-
-    var out = [];
-    var y = startY, m = startM;
+    var out=[];
     while(y < endY || (y === endY && m <= endM)){
       out.push(y + '-' + String(m).padStart(2,'0'));
       m++;
-      if(m > 12){ m = 1; y++; }
+      if(m > 12){m=1;y++;}
     }
-
     return out;
   }
 
-  function renderVentasMesCompletoV126(){
+  var forceAllMonthLabelsPluginV127={
+    id:'forceAllMonthLabelsV127',
+    afterDraw:function(chart){
+      if(!chart || !chart.canvas || chart.canvas.id !== 'ventasMes') return;
+
+      var ctx=chart.ctx;
+      var xScale=chart.scales.x;
+      var area=chart.chartArea;
+      var labels=chart.data.labels || [];
+      if(!xScale || !area || !labels.length) return;
+
+      ctx.save();
+
+      /* Tapar labels automáticos si Chart.js oculta algunos */
+      ctx.fillStyle='#ffffff';
+      ctx.fillRect(area.left - 8, area.bottom + 2, area.right - area.left + 16, 38);
+
+      ctx.fillStyle='#555555';
+      ctx.font='10px "Nunito Sans", Arial, sans-serif';
+      ctx.textAlign='center';
+      ctx.textBaseline='top';
+
+      labels.forEach(function(label, i){
+        var x=xScale.getPixelForTick(i);
+        ctx.fillText(String(label), x, area.bottom + 10);
+      });
+
+      ctx.restore();
+    }
+  };
+
+  function renderVentasMesCompletoV127(){
     try{
       if(!window.state || !Array.isArray(state.data)) return;
 
-      var canvas = document.getElementById('ventasMes');
+      var canvas=document.getElementById('ventasMes');
       if(!canvas || typeof Chart === 'undefined') return;
 
-      var box = canvas.closest('.chartBox');
-      if(box) box.classList.add('v126-months-full');
+      var box=canvas.closest('.chartBox');
+      if(box) box.classList.add('v127-months-full');
 
-      var monthKeys = buildMonthKeysV126();
+      var monthKeys=buildMonthKeysV127();
       if(!monthKeys.length) return;
 
-      var byMonth = new Map();
+      var byMonth=new Map();
       state.data.forEach(function(r){
-        var k = ymKeyV126(r);
+        var k=ymKeyV127(r);
         if(!k) return;
-        byMonth.set(k, (byMonth.get(k) || 0) + (Number(r.venta) || 0));
+        byMonth.set(k,(byMonth.get(k)||0)+(Number(r.venta)||0));
       });
 
-      var labels = monthKeys.map(labelV126);
-      var values = monthKeys.map(function(k){ return byMonth.get(k) || 0; });
+      var labels=monthKeys.map(labelV127);
+      var values=monthKeys.map(function(k){return byMonth.get(k)||0;});
 
       if(state.charts && state.charts.ventasMes){
-        try{ state.charts.ventasMes.destroy(); }catch(e){}
+        try{state.charts.ventasMes.destroy();}catch(e){}
       }
 
-      var maxValue = Math.max.apply(null, values.concat([0]));
-      var suggestedMax = maxValue ? maxValue * 1.18 : 1000;
+      var maxValue=Math.max.apply(null,values.concat([0]));
+      var suggestedMax=maxValue ? maxValue*1.18 : 1000;
 
-      state.charts.ventasMes = new Chart(canvas, {
+      state.charts.ventasMes=new Chart(canvas,{
         type:'bar',
         data:{
           labels:labels,
@@ -5376,23 +5393,31 @@ function updateProductStickyOffsets(){
             borderColor:'#000000',
             borderWidth:0,
             borderRadius:0,
-            barPercentage:.72,
+            barPercentage:.68,
             categoryPercentage:.72
           }]
         },
-        plugins:(typeof barValueLabels !== 'undefined') ? [barValueLabels] : [],
+        plugins:[
+          (typeof barValueLabels !== 'undefined' ? barValueLabels : null),
+          forceAllMonthLabelsPluginV127
+        ].filter(Boolean),
         options:{
           responsive:true,
           maintainAspectRatio:false,
           animation:false,
-          transitions:{active:{animation:{duration:0}},resize:{animation:{duration:0}},show:{animation:{duration:0}},hide:{animation:{duration:0}}},
-          layout:{padding:{top:48,right:18,bottom:20,left:8}},
+          transitions:{
+            active:{animation:{duration:0}},
+            resize:{animation:{duration:0}},
+            show:{animation:{duration:0}},
+            hide:{animation:{duration:0}}
+          },
+          layout:{padding:{top:48,right:18,bottom:46,left:8}},
           plugins:{
             legend:{display:false},
             tooltip:{
-              backgroundColor:'#000000',
-              titleColor:'#ffffff',
-              bodyColor:'#ffffff',
+              backgroundColor:'#000',
+              titleColor:'#fff',
+              bodyColor:'#fff',
               callbacks:{
                 label:function(c){
                   return 'Venta: ' + (typeof money === 'function' ? money(c.raw) : c.raw);
@@ -5402,10 +5427,12 @@ function updateProductStickyOffsets(){
           },
           scales:{
             x:{
+              offset:true,
               grid:{display:false},
               ticks:{
+                display:false,
                 autoSkip:false,
-                maxRotation:45,
+                maxRotation:0,
                 minRotation:0,
                 color:'#555',
                 font:{family:'Nunito Sans',size:10}
@@ -5419,55 +5446,44 @@ function updateProductStickyOffsets(){
                 color:'#555',
                 font:{family:'Nunito Sans',size:11},
                 callback:function(v){
-                  return v === 0 ? '$0' : (v >= 1000000 ? '$' + (v/1000000).toFixed(1) + 'M' : '$' + Math.round(v/1000) + 'K');
+                  return v===0 ? '$0' : (v>=1000000 ? '$'+(v/1000000).toFixed(1)+'M' : '$'+Math.round(v/1000)+'K');
                 }
               }
             }
           }
         }
       });
+
     }catch(e){
-      console.warn('V126 Ventas por mes completo:', e);
+      console.warn('V127 Ventas por mes completo:', e);
     }
   }
 
-  function applyV126(){
-    moveExecutiveChartsToBottomV126();
-    renderVentasMesCompletoV126();
-    setTimeout(moveExecutiveChartsToBottomV126, 50);
-    setTimeout(moveExecutiveChartsToBottomV126, 300);
+  function applyV127(){
+    moveExecutiveChartsToBottomV127();
+    renderVentasMesCompletoV127();
+    setTimeout(moveExecutiveChartsToBottomV127,60);
   }
 
-  var oldRender = window.render;
-  if(typeof oldRender === 'function' && !oldRender.__v126MesesCompletos){
-    window.render = function(){
-      var result = oldRender.apply(this, arguments);
-      setTimeout(applyV126, 0);
-      setTimeout(applyV126, 120);
+  var oldRender=window.render;
+  if(typeof oldRender === 'function' && !oldRender.__v127MesesCompletos){
+    window.render=function(){
+      var result=oldRender.apply(this,arguments);
+      setTimeout(applyV127,0);
+      setTimeout(applyV127,180);
+      setTimeout(applyV127,520);
       return result;
     };
-    window.render.__v126MesesCompletos = true;
+    window.render.__v127MesesCompletos=true;
   }
 
-  var oldTop10 = window.renderVentasTop10V119 || window.renderVentasTop10V118;
-  if(typeof oldTop10 === 'function' && !oldTop10.__v126MoveBottom){
-    var wrapped = function(){
-      var result = oldTop10.apply(this, arguments);
-      setTimeout(moveExecutiveChartsToBottomV126, 0);
-      return result;
-    };
-    wrapped.__v126MoveBottom = true;
-    window.renderVentasTop10V119 = wrapped;
-    window.renderVentasTop10V118 = wrapped;
-  }
-
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(applyV126, 400);
-    setTimeout(applyV126, 1200);
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(applyV127,400);
+    setTimeout(applyV127,1200);
   });
-  window.addEventListener('load', function(){
-    setTimeout(applyV126, 500);
-    setTimeout(applyV126, 1600);
+  window.addEventListener('load',function(){
+    setTimeout(applyV127,500);
+    setTimeout(applyV127,1600);
   });
 })();
 </script>
